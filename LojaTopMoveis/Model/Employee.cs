@@ -15,7 +15,6 @@ namespace Topmoveis.Model
         public string? Login { get; set; }
         public string? Password { get; set; }
         public DateTime? BirthDate { get; set; }
-        public Client? Client { get; set; }
         public bool Inactive { get; set; } = false;
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
         public DateTime ChangeDate { get; set; } = DateTime.Now.ToLocalTime();

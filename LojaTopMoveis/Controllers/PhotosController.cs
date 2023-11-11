@@ -9,31 +9,31 @@ namespace LojaTopMoveis.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class PhotosController : ControllerBase
     {
-        private readonly ILoja<Product> _productInterface;
+        private readonly ILoja<Photo> _productInterface;
 
-        public ProductController(ILoja<Product> productInterface)
+        public PhotosController(ILoja<Photo> productInterface)
         {
             _productInterface = productInterface;
         }
 
         [HttpGet]
         [Route("/produtos")]
-        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts()
+        public async Task<ActionResult<ServiceResponse<List<Photo>>>> GetProducts()
         {
             return Ok(await _productInterface.Get());
         }
 
         [HttpPost("/produtos/0")]
-        public async Task<ActionResult<ServiceResponse<List<Product>>>> CreateProducts(Product product)
+        public async Task<ActionResult<ServiceResponse<List<Photo>>>> CreateProducts(Photo product)
         {
             return Ok(await _productInterface.Create(product));
         }
 
 
         [HttpGet("/produtos/{id}")]
-        public async Task<ActionResult<ServiceResponse<Product>>> GetById(Guid id)
+        public async Task<ActionResult<ServiceResponse<Photo>>> GetById(Guid id)
         {
             return Ok(await _productInterface.GetByID(id));
         }
@@ -46,13 +46,13 @@ namespace LojaTopMoveis.Controllers
         }*/
 
         [HttpPut("/produtos/{id}")]
-        public async Task<ActionResult<ServiceResponse<Product>>> Update(Product product)
+        public async Task<ActionResult<ServiceResponse<Photo>>> Update(Photo product)
         {
             return Ok(await _productInterface.Update(product));
         }
 
         [HttpDelete("/produtos/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<Product>>>> DeleteProducts(Guid id)
+        public async Task<ActionResult<ServiceResponse<List<Photo>>>> DeleteProducts(Guid id)
         {
             return Ok(await _productInterface.Delete(id));
         }

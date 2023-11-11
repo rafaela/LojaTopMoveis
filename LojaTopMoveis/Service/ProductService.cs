@@ -1,11 +1,12 @@
-﻿using LojaTopMoveis.Model;
+﻿using Loja.Model;
+using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
 namespace LojaTopMoveis.Service
 {
-    public class ProductService : IProductInterface
+    public class ProductService : ILoja<Product>
     {
         private readonly LojaContext _context;
 
@@ -14,15 +15,17 @@ namespace LojaTopMoveis.Service
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<Product>>> CreateProducts(Product product)
+        public async Task<ServiceResponse<Product>> Create(Product product)
         {
-            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+            ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
 
             try
             {
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-                serviceResponse.Data = _context.Products.ToList();
+                serviceResponse.Data = null;
+                serviceResponse.Message = "Produto cadastrado";
+                serviceResponse.Sucess = true;
 
             }
             catch (Exception ex)
@@ -34,9 +37,9 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Product>>> DeleteProduct(Guid id)
+        public async Task<ServiceResponse<Product>> Delete(Guid id)
         {
-            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+            ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
 
             try
             {
@@ -53,7 +56,8 @@ namespace LojaTopMoveis.Service
                     _context.Products.Remove(product);
 
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = await _context.Products.ToListAsync();
+                    serviceResponse.Message = "Produto removido";
+                    serviceResponse.Sucess = false;
                 }
             }
             catch (Exception ex)
@@ -65,7 +69,7 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Product>> GetProductByID(Guid id)
+        public async Task<ServiceResponse<Product>> GetByID(Guid id)
         {
             ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
             try
@@ -91,7 +95,25 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Product>>> GetProducts()
+        public async Task<ServiceResponse<List<Product>>> Get()
+        {
+            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+
+            try
+            {
+                serviceResponse.Data = await _context.Products.Include(a => a.Category).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
+
+        }
+
+        public async Task<ServiceResponse<List<Product>>> GetFilter(Product product)
         {
             ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
 
@@ -106,11 +128,12 @@ namespace LojaTopMoveis.Service
             }
 
             return serviceResponse;
+
         }
 
-        public async Task<ServiceResponse<List<Product>>> InactivateProduct(Guid id)
+        public async Task<ServiceResponse<Product>> Inactivate(Guid id)
         {
-            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+            ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
 
             try
             {
@@ -128,24 +151,22 @@ namespace LojaTopMoveis.Service
                     product.ChangeDate = DateTime.Now.ToLocalTime();
                     _context.Products.Update(product);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = await _context.Products.ToListAsync();
+                    serviceResponse.Message = "Produto inativado";
+                    serviceResponse.Sucess = true;
+
                 }
-
-                
-
             }
             catch (Exception ex)
             {
                 serviceResponse.Message = ex.Message;
                 serviceResponse.Sucess = false;
             }
-
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Product>>> UpdateProduct(Product product)
+        public async Task<ServiceResponse<Product>> Update(Product product)
         {
-            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+                ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
 
             try
             {
@@ -163,7 +184,8 @@ namespace LojaTopMoveis.Service
                     _context.Products.Update(product);
 
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = await _context.Products.ToListAsync();
+                    serviceResponse.Message = "Produto atualizado";
+                    serviceResponse.Sucess = true;
                 }
             }
             catch (Exception ex)

@@ -1,3 +1,4 @@
+using Loja.Model;
 using LojaTopMoveis.Service;
 using Microsoft.EntityFrameworkCore;
 using Topmoveis.Data;
@@ -12,7 +13,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IProductInterface, ProductService>();
+builder.Services.AddScoped<ILoja<Product>, ProductService>();
+builder.Services.AddScoped<ILoja<Category>, CategoryService>();
+builder.Services.AddScoped<ILoja<Employee>, EmployeeService>();
 
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
     .GetConnectionString("ServerConnection")));
