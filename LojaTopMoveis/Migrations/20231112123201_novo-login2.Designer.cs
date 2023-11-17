@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Topmoveis.Data;
 
@@ -11,9 +12,11 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    partial class LojaContextModelSnapshot : ModelSnapshot
+    [Migration("20231112123201_novo-login2")]
+    partial class novologin2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,28 +77,6 @@ namespace LojaTopMoveis.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Photos");
-                });
-
-            modelBuilder.Entity("LojaTopMoveis.Model.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -369,18 +350,19 @@ namespace LojaTopMoveis.Migrations
                     b.Property<bool>("Inactive")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("LoginId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Login")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LoginId");
 
                     b.ToTable("Clients");
                 });
@@ -409,18 +391,19 @@ namespace LojaTopMoveis.Migrations
                     b.Property<bool>("Inactive")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("LoginId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("LoginId");
+                    b.HasKey("Id");
 
                     b.ToTable("Employees");
                 });
@@ -577,24 +560,6 @@ namespace LojaTopMoveis.Migrations
                         .HasForeignKey("ClientId");
 
                     b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("Topmoveis.Model.Client", b =>
-                {
-                    b.HasOne("LojaTopMoveis.Model.User", "Login")
-                        .WithMany()
-                        .HasForeignKey("LoginId");
-
-                    b.Navigation("Login");
-                });
-
-            modelBuilder.Entity("Topmoveis.Model.Employee", b =>
-                {
-                    b.HasOne("LojaTopMoveis.Model.User", "Login")
-                        .WithMany()
-                        .HasForeignKey("LoginId");
-
-                    b.Navigation("Login");
                 });
 
             modelBuilder.Entity("Topmoveis.Model.Product", b =>
