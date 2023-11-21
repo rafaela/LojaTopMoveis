@@ -23,9 +23,23 @@ namespace LojaTopMoveis.Service
             {
                 _context.Add(category);
                 await _context.SaveChangesAsync();
-                serviceResponse.Data = null;
-                serviceResponse.Message = "Categoria cadastrada";
-                serviceResponse.Sucess = true;
+
+                SubcategoryService subcategoryService = new SubcategoryService(_context);
+                var cadastro = subcategoryService.Create(category.Subcategories, category.Id);
+
+                if (!cadastro.Result)
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Erro ao cadastrar/atualizar subcategoria";
+                    serviceResponse.Sucess = false;
+
+                }
+                else
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Categoria cadastrada";
+                    serviceResponse.Sucess = true;
+                }
 
             }
             catch (Exception ex)
@@ -53,6 +67,8 @@ namespace LojaTopMoveis.Service
                 }
                 else
                 {
+                    var subcategories = await _context.Subcategories.Where(a => a.CategoryId == category.Id).ToListAsync();
+                    _context.Subcategories.RemoveRange(subcategories);
                     _context.Categories.Remove(category);
 
                     await _context.SaveChangesAsync();
@@ -74,7 +90,7 @@ namespace LojaTopMoveis.Service
             ServiceResponse<Category> serviceResponse = new ServiceResponse<Category>();
             try
             {
-                Category? category = await _context.Categories.FirstOrDefaultAsync(a => a.Id == id);
+                Category? category = await _context.Categories.Include(a => a.Subcategories).FirstOrDefaultAsync(a => a.Id == id);
 
                 if (category == null)
                 {
@@ -185,6 +201,8 @@ namespace LojaTopMoveis.Service
             {
                 Category? category1 = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(a => a.Id == category.Id);
 
+                
+
                 if (category1 == null)
                 {
                     serviceResponse.Data = null;
@@ -195,10 +213,25 @@ namespace LojaTopMoveis.Service
                 {
                     category.ChangeDate = DateTime.Now.ToLocalTime();
                     _context.Categories.Update(category);
-
                     await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Categoria atualizada";
-                    serviceResponse.Sucess = true;
+
+                    SubcategoryService subcategoryService = new SubcategoryService(_context);
+                    var cadastro = subcategoryService.Create(category.Subcategories, category.Id);
+
+                    if (!cadastro.Result)
+                    {
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Erro ao cadastrar/atualizar subcategoria";
+                        serviceResponse.Sucess = false;
+
+                    }
+                    else
+                    {
+                        serviceResponse.Message = "Categoria atualizada";
+                        serviceResponse.Sucess = true;
+                    }
+
+                   
                 }
             }
             catch (Exception ex)

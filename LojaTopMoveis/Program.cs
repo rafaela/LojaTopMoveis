@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
@@ -27,6 +28,12 @@ builder.Services.AddScoped<ILoja<User>, TokenService>();
 
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
     .GetConnectionString("ServerConnection")));
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
 
 //AddIdentity

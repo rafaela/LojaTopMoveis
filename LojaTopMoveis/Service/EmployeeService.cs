@@ -21,11 +21,38 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                _context.Employees.Add(employee);
-                await _context.SaveChangesAsync();
-                serviceResponse.Data = null;
-                serviceResponse.Message = "Funcionário cadastrado";
-                serviceResponse.Sucess = true;
+                var user = _context.Employees.Where(a => a.Email == employee.Email).FirstOrDefault();
+                if(user != null)
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "E-mail já cadastrado";
+                    serviceResponse.Sucess = false;
+                }
+                else
+                {
+                    UserService userService = new UserService(_context);
+                    var id = userService.Create(employee.Login);
+
+                    if(!id.Equals(""))
+                    {
+                        employee.Login.Id = id;
+                        _context.Employees.Add(employee);
+                        await _context.SaveChangesAsync();
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Funcionário cadastrado";
+                        serviceResponse.Sucess = true;
+                    }
+                    else
+                    {
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Erro ao cadastrar funcionário";
+                        serviceResponse.Sucess = false;
+                    }
+
+                    
+                }
+
+                
 
             }
             catch (Exception ex)
@@ -193,12 +220,25 @@ namespace LojaTopMoveis.Service
                 }
                 else
                 {
-                    employee.ChangeDate = DateTime.Now.ToLocalTime();
-                    _context.Employees.Update(employee);
+                    UserService userService = new UserService(_context);
+                    var id = userService.Create(employee.Login);
 
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Categoria atualizada";
-                    serviceResponse.Sucess = true;
+                    if (!id.Equals(""))
+                    {
+                        employee.Login.Id = id;
+                        employee.ChangeDate = DateTime.Now.ToLocalTime();
+                        _context.Employees.Update(employee);
+                        await _context.SaveChangesAsync();
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Funcionário atualizado";
+                        serviceResponse.Sucess = true;
+                    }
+                    else
+                    {
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Erro ao cadastrar funcionário";
+                        serviceResponse.Sucess = false;
+                    }
                 }
             }
             catch (Exception ex)

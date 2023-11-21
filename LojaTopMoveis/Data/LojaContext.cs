@@ -33,12 +33,20 @@ namespace Topmoveis.Data
         public DbSet<Sale> Sales { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Photo> Photos { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Usuarios { get; set; }
+        public DbSet<Subcategory> Subcategories{ get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>().HasKey(a => a.Id);
+
+            modelBuilder.Entity<IdentityUserLogin>().HasKey(a => a.UserId);
+
+            modelBuilder.Entity<IdentityUserRole>().HasKey(a => a.UserId);
+
         }
 
         internal object FindAsync(Guid id)

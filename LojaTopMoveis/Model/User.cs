@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System.ComponentModel.DataAnnotations;
 
 namespace LojaTopMoveis.Model
 {
-    public class User
+    public class User : IdentityUser 
     {
 
         public User()
@@ -10,18 +11,20 @@ namespace LojaTopMoveis.Model
 
         public User(string? email, string? password)
         {
-            Id = new Guid();
             Email = email;
-            Password = password;
+            UserName = email;
+            PasswordHash = password;
         }
 
-        public Guid Id { get; set; }
+        public override string Id { get; set; } = "";
+
+        public override string? UserName { get; set; }
 
         [EmailAddress]
         [Required(ErrorMessage = "Email é obrigatório!")]
-        public string? Email { get; set; }
+        public override string? Email { get; set; }
 
         [Required(ErrorMessage = "Password é obrigatório!")]
-        public string? Password { get; set; }
+        public override string? PasswordHash { get; set; }
     }
 }

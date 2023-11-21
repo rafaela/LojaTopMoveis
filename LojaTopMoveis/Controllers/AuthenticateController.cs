@@ -64,7 +64,7 @@ namespace LojaTopMoveis.Controllers
         public async Task<ServiceResponse<User>> LoginAsync(User user)
         {
             ServiceResponse<User> serviceResponse = new ServiceResponse<User>();
-            var login = await _context.Users.Where(u => u.Email == user.Email && u.Password == user.Password).FirstOrDefaultAsync();
+            var login = await _context.Usuarios.Where(u => u.Email == user.Email && u.PasswordHash == user.PasswordHash).FirstOrDefaultAsync();
             if(login != null)
             {
                 var tokenService = new TokenService();
