@@ -1,4 +1,5 @@
 ﻿using Loja.Model;
+using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
 using Topmoveis.Data;
@@ -21,11 +22,29 @@ namespace LojaTopMoveis.Service
 
             try
             {
+                var photosList = product.Photos;
+                product.Photos = null;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-                serviceResponse.Data = null;
-                serviceResponse.Message = "Produto cadastrado";
-                serviceResponse.Sucess = true;
+                
+                PhotosService photoService = new PhotosService(_context);
+                photosList?.ForEach(a => a.ProductId = product.Id);
+
+                var cadastro = photoService.Create(photosList);
+                if (!cadastro)
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Erro ao cadastrar as imagens dos produtos";
+                    serviceResponse.Sucess = false;
+                }
+                else
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Produto cadastrado";
+                    serviceResponse.Sucess = true;
+                }
+                
+                
 
             }
             catch (Exception ex)
@@ -74,7 +93,7 @@ namespace LojaTopMoveis.Service
             ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
             try
             {
-                Product? product = await _context.Products.FirstOrDefaultAsync(a => a.Id == id);
+                Product? product = await _context.Products.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
 
                 if (product == null)
                 {
@@ -184,8 +203,23 @@ namespace LojaTopMoveis.Service
                     _context.Products.Update(product);
 
                     await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Produto atualizado";
-                    serviceResponse.Sucess = true;
+
+                    PhotosService photoService = new PhotosService(_context);
+                    product.Photos?.ForEach(a => a.ProductId = product.Id);
+
+                    var cadastro = photoService.Create(product.Photos);
+                    if (!cadastro)
+                    {
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Erro ao cadastrar/atualizar as imagens dos produtos";
+                        serviceResponse.Sucess = false;
+                    }
+                    else
+                    {
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Produto atualizado";
+                        serviceResponse.Sucess = true;
+                    }
                 }
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Loja.Model;
+using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using LojaTopMoveis.Service;
 using Microsoft.AspNetCore.Identity;
@@ -27,44 +28,16 @@ namespace LojaTopMoveis.Controllers
             _context = context;
         }
 
-       /* [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> CreateUserAsync([FromBody] User model)
-        {
-            var userExists = await _userManager.FindByEmailAsync(model.Email);
-
-            if (userExists is not null)
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    new ServiceResponse<Employee> { Sucess = false, Message = "Usuário já existe!" }
-                );
-
-            IdentityUser user = new()
-            {
-                SecurityStamp = Guid.NewGuid().ToString(),
-                Email = model.Email,
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (!result.Succeeded)
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    new ServiceResponse<Employee> { Sucess = false, Message = "Erro ao criar usuário" }
-                );
-
-
-
-            return Ok(new ServiceResponse<Employee> { Message = "Usuário criado com sucesso!" });
-        }
-       */
+       
 
         [HttpPost]
         [Route("login")]
         public async Task<ServiceResponse<User>> LoginAsync(User user)
         {
             ServiceResponse<User> serviceResponse = new ServiceResponse<User>();
-            var login = await _context.Usuarios.Where(u => u.Email == user.Email && u.PasswordHash == user.PasswordHash).FirstOrDefaultAsync();
+            UserService userService = new UserService(_context);
+            var hash = userService.QuickHash(user.PasswordHash);
+            var login = await _context.Usuarios.Where(u => u.Email == user.Email && u.PasswordHash == hash).FirstOrDefaultAsync();
             if(login != null)
             {
                 var tokenService = new TokenService();
@@ -80,6 +53,27 @@ namespace LojaTopMoveis.Controllers
             }
 
             return serviceResponse;
+
+        }
+
+        [HttpPut]
+        [Route("atualizasenha")]
+        public Task<ServiceResponse<User>> UpdatePassword(User user)
+        {
+            ServiceResponse<User> serviceResponse = new ServiceResponse<User>();
+            UserService userService = new UserService(_context);
+            user.PasswordHash = userService.QuickHash(user.PasswordHash);
+            var update =  userService.Update(user);
+            if (update)
+            {
+                serviceResponse.Sucess = true;
+            }
+            else
+            {
+                serviceResponse.Sucess = false;
+            }
+
+            return Task.FromResult(serviceResponse);
 
         }
 

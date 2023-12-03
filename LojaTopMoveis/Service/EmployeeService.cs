@@ -1,4 +1,5 @@
 ﻿using Loja.Model;
+using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
 using Topmoveis.Data;
@@ -215,7 +216,7 @@ namespace LojaTopMoveis.Service
                 if (employee1 == null)
                 {
                     serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
+                    serviceResponse.Message = "Funcionário não encontrada";
                     serviceResponse.Sucess = false;
                 }
                 else
@@ -223,22 +224,12 @@ namespace LojaTopMoveis.Service
                     UserService userService = new UserService(_context);
                     var id = userService.Create(employee.Login);
 
-                    if (!id.Equals(""))
-                    {
-                        employee.Login.Id = id;
-                        employee.ChangeDate = DateTime.Now.ToLocalTime();
-                        _context.Employees.Update(employee);
-                        await _context.SaveChangesAsync();
-                        serviceResponse.Data = null;
-                        serviceResponse.Message = "Funcionário atualizado";
-                        serviceResponse.Sucess = true;
-                    }
-                    else
-                    {
-                        serviceResponse.Data = null;
-                        serviceResponse.Message = "Erro ao cadastrar funcionário";
-                        serviceResponse.Sucess = false;
-                    }
+                    employee.ChangeDate = DateTime.Now.ToLocalTime();
+                    _context.Employees.Update(employee);
+                    await _context.SaveChangesAsync();
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Funcionário atualizado";
+                    serviceResponse.Sucess = true;
                 }
             }
             catch (Exception ex)

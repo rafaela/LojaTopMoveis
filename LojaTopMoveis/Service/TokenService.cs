@@ -1,4 +1,5 @@
 ﻿using Loja.Model;
+using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

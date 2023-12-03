@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ namespace Topmoveis.Model
         public string? Number { get; set; }
         public string? Complement { get; set; }
         public Client? Client { get; set; }
+        [ForeignKey("ClientId")]
+        public Guid? ClientId { get; set; }
         public bool Inactive { get; set; } = false;
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
         public DateTime ChangeDate { get; set; } = DateTime.Now.ToLocalTime();

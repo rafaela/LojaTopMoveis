@@ -16,6 +16,9 @@
   <ItemGroup>
     <Compile Remove="Controllers\HomeController.cs" />
     <Compile Remove="Controllers\PhotosController.cs" />
+    <Compile Remove="Controllers\ProductController - Copy %282%29.cs" />
+    <Compile Remove="Controllers\ProductController - Copy %283%29.cs" />
+    <Compile Remove="Controllers\ProductController - Copy.cs" />
     <Compile Remove="Controllers\ProductController2.cs" />
     <Compile Remove="Model\TokenModel.cs" />
   </ItemGroup>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Topmoveis.Data;
 
@@ -11,9 +12,11 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    partial class LojaContextModelSnapshot : ModelSnapshot
+    [Migration("20231122165757_frete-novo")]
+    partial class fretenovo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -562,8 +565,8 @@ namespace LojaTopMoveis.Migrations
                     b.Property<bool>("FreeShipping")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("TimeDeliveryDays")
-                        .HasColumnType("int");
+                    b.Property<string>("TimeDeliveryDays")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("ValueKm")
                         .HasColumnType("decimal(18,2)");

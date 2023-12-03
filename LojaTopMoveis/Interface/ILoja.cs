@@ -1,7 +1,7 @@
 ﻿using LojaTopMoveis.Model;
 using Topmoveis.Model;
 
-namespace LojaTopMoveis.Service
+namespace LojaTopMoveis.Interface
 {
     public interface ILoja<T>
     {

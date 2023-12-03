@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Topmoveis.Data;
 
@@ -11,9 +12,11 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    partial class LojaContextModelSnapshot : ModelSnapshot
+    [Migration("20231121111221_frete2")]
+    partial class frete2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,9 +61,6 @@ namespace LojaTopMoveis.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageBase64")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Inactive")
@@ -544,38 +544,6 @@ namespace LojaTopMoveis.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("Topmoveis.Model.Freight", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ChangeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CityFreeShipping")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("FreeShipping")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("TimeDeliveryDays")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("ValueKm")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ValuePriceFreeShipping")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Freights");
-                });
-
             modelBuilder.Entity("Topmoveis.Model.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -663,9 +631,11 @@ namespace LojaTopMoveis.Migrations
 
             modelBuilder.Entity("LojaTopMoveis.Model.Photo", b =>
                 {
-                    b.HasOne("Topmoveis.Model.Product", null)
+                    b.HasOne("Topmoveis.Model.Product", "Product")
                         .WithMany("Photos")
                         .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("LojaTopMoveis.Model.Subcategory", b =>

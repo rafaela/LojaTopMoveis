@@ -60,130 +60,33 @@ namespace LojaTopMoveis.Service
 
         }
 
-        /*public async Task<ServiceResponse<Subcategory>> Delete(Guid id)
+        public bool Remove(Subcategory subcategory)
         {
-            ServiceResponse<Subcategory> serviceResponse = new ServiceResponse<Subcategory>();
-
             try
             {
-                Subcategory? subcategory = await _context.Subcategories.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
-
-                if (subcategory == null)
+                if (subcategory != null)
                 {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
-                }
-                else
-                {
-                    var subcategories = await _context.Subcategories.Where(a => a.CategoryId == subcategory.Id).ToListAsync();
-                    _context.Subcategories.RemoveRange(subcategories);
-                    _context.Subcategories.Remove(subcategory);
-
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Subcategoria removida";
-                    serviceResponse.Sucess = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<Subcategory>> GetByID(Guid id)
-        {
-            ServiceResponse<Subcategory> serviceResponse = new ServiceResponse<Subcategory>();
-            /*try
-            {
-                Subcategory? subcategory = await _context.Subcategories.FirstOrDefaultAsync(a => a.Id == id);
-
-                if (categsubcategoryory == null)
-                {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
-                }
-
-                serviceResponse.Data = subcategory;
-
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<List<Subcategory>>> Get()
-        {
-            ServiceResponse<List<Subcategory>> serviceResponse = new ServiceResponse<List<Subcategory>>();
-
-            try
-            {
-                serviceResponse.Data = await _context.Subcategories.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-
-        }
-
-        public async Task<ServiceResponse<Subcategory>> Update(Subcategory subcategory)
-        {
-            ServiceResponse<Subcategory> serviceResponse = new ServiceResponse<Subcategory>();
-
-            try
-            {
-                Category? category1 = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(a => a.Id == category.Id);
-
-                
-
-                if (category1 == null)
-                {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
-                }
-                else
-                {
-                    category.ChangeDate = DateTime.Now.ToLocalTime();
-                    _context.Categories.Update(category);
-
-                    if (category.Subcategories != null && category.Subcategories.Count > 0)
+                    var sub = _context.Photos.Where(a => a.ID == subcategory.Id).FirstOrDefault();
+                    if (sub == null)
                     {
-                        var lista = category.Subcategories.ToList();
-                        foreach (var sub in lista)
-                        {
-                            Subcategory subcategory = new Subcategory();
-                            subcategory.Name = sub.Name;
-                            subcategory.CategoryId = category.Id;
-
-                            _context.Subcategories.Add(subcategory);
-                        }
+                        _context.Subcategories.Remove(subcategory);
                     }
+                    else
+                    {
+                        return false;
+                    }
+                    _context.SaveChangesAsync();
+                    return true;
 
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Categoria atualizada";
-                    serviceResponse.Sucess = true;
                 }
             }
             catch (Exception ex)
             {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
+                var message = ex.Message;
+                return false;
             }
+            return true;
 
-            return serviceResponse;
-        }*/
+        }
     }
 }

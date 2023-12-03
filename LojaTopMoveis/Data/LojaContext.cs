@@ -35,6 +35,7 @@ namespace Topmoveis.Data
         public DbSet<Photo> Photos { get; set; }
         public DbSet<User> Usuarios { get; set; }
         public DbSet<Subcategory> Subcategories{ get; set; }
+        public DbSet<Freight> Freights { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

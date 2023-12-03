@@ -1,4 +1,5 @@
 ﻿using Loja.Model;
+using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
 using Topmoveis.Data;
@@ -117,7 +118,7 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                serviceResponse.Data = await _context.Categories.ToListAsync();
+                serviceResponse.Data = await _context.Categories.Include(a => a.Subcategories).ToListAsync();
             }
             catch (Exception ex)
             {

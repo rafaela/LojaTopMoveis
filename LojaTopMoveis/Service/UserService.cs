@@ -28,7 +28,17 @@ namespace LojaTopMoveis.Service
                 {
                     user.UserName = user.Email;
                     user.PasswordHash = QuickHash(user.PasswordHash);
-                    _context.Usuarios.Add(user);
+
+                    var search = _context.Usuarios.Where(a => a.Email == user.Email).FirstOrDefault();
+                    if(search != null)
+                    {
+                        _context.Usuarios.Update(user);
+                    }
+                    else
+                    {
+                        _context.Usuarios.Add(user);
+                    }
+                    
                     _context.SaveChangesAsync();
 
                     return user.Id;
@@ -44,14 +54,14 @@ namespace LojaTopMoveis.Service
 
         }
 
-        string QuickHash(string input)
+        public string QuickHash(string input)
         {
             var inputBytes = Encoding.UTF8.GetBytes(input);
-            var inputHash = SHA256.HashData(inputBytes);
+            var inputHash = MD5.HashData(inputBytes);
             return Convert.ToHexString(inputHash);
         }
 
-        public async Task<bool> Update(User user)
+        public bool Update(User user)
         {
             try
             {
@@ -63,7 +73,7 @@ namespace LojaTopMoveis.Service
                         user.UserName = user.Email;
                         user.PasswordHash = QuickHash(user.PasswordHash);
                         _context.Usuarios.Add(user);
-                        await _context.SaveChangesAsync();
+                        _context.SaveChanges();
                     }
                     else
                     {
@@ -82,130 +92,6 @@ namespace LojaTopMoveis.Service
 
         }
 
-        /*public async Task<ServiceResponse<Subcategory>> Delete(Guid id)
-        {
-            ServiceResponse<Subcategory> serviceResponse = new ServiceResponse<Subcategory>();
-
-            try
-            {
-                Subcategory? subcategory = await _context.Subcategories.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
-
-                if (subcategory == null)
-                {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
-                }
-                else
-                {
-                    var subcategories = await _context.Subcategories.Where(a => a.CategoryId == subcategory.Id).ToListAsync();
-                    _context.Subcategories.RemoveRange(subcategories);
-                    _context.Subcategories.Remove(subcategory);
-
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Subcategoria removida";
-                    serviceResponse.Sucess = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<Subcategory>> GetByID(Guid id)
-        {
-            ServiceResponse<Subcategory> serviceResponse = new ServiceResponse<Subcategory>();
-            /*try
-            {
-                Subcategory? subcategory = await _context.Subcategories.FirstOrDefaultAsync(a => a.Id == id);
-
-                if (categsubcategoryory == null)
-                {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
-                }
-
-                serviceResponse.Data = subcategory;
-
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<List<Subcategory>>> Get()
-        {
-            ServiceResponse<List<Subcategory>> serviceResponse = new ServiceResponse<List<Subcategory>>();
-
-            try
-            {
-                serviceResponse.Data = await _context.Subcategories.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-
-        }
-
-        public async Task<ServiceResponse<Subcategory>> Update(Subcategory subcategory)
-        {
-            ServiceResponse<Subcategory> serviceResponse = new ServiceResponse<Subcategory>();
-
-            try
-            {
-                Category? category1 = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(a => a.Id == category.Id);
-
-                
-
-                if (category1 == null)
-                {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
-                }
-                else
-                {
-                    category.ChangeDate = DateTime.Now.ToLocalTime();
-                    _context.Categories.Update(category);
-
-                    if (category.Subcategories != null && category.Subcategories.Count > 0)
-                    {
-                        var lista = category.Subcategories.ToList();
-                        foreach (var sub in lista)
-                        {
-                            Subcategory subcategory = new Subcategory();
-                            subcategory.Name = sub.Name;
-                            subcategory.CategoryId = category.Id;
-
-                            _context.Subcategories.Add(subcategory);
-                        }
-                    }
-
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Categoria atualizada";
-                    serviceResponse.Sucess = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-        }*/
+        
     }
 }

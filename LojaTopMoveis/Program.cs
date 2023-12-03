@@ -1,5 +1,6 @@
 using Google;
 using Loja.Model;
+using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using LojaTopMoveis.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,6 +26,11 @@ builder.Services.AddScoped<ILoja<Product>, ProductService>();
 builder.Services.AddScoped<ILoja<Category>, CategoryService>();
 builder.Services.AddScoped<ILoja<Employee>, EmployeeService>();
 builder.Services.AddScoped<ILoja<User>, TokenService>();
+builder.Services.AddScoped<IPhoto, PhotosService>();
+builder.Services.AddScoped<ILoja<Freight>, FreightService>();
+builder.Services.AddScoped<ILoja<Client>, ClientService>();
+builder.Services.AddScoped<IAddress, AddressService>();
+
 
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
     .GetConnectionString("ServerConnection")));
