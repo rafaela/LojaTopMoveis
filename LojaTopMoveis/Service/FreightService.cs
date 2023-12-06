@@ -25,6 +25,21 @@ namespace LojaTopMoveis.Service
                 _context.Add(freight);
                 await _context.SaveChangesAsync();
                 
+                if(freight.Cities != null && freight.Cities.Count > 0)
+                {
+                    CityService cityService = new CityService(_context);
+                    foreach (City city in freight.Cities)
+                    {
+                        var success = cityService.Create(city);
+                        if (!success.Result.Sucess)
+                        {
+                            serviceResponse.Data = null;
+                            serviceResponse.Message = "Erro ao cadastrar cidade";
+                            serviceResponse.Sucess = false;
+                        }
+                    }
+                }
+                
                 serviceResponse.Data = null;
                 serviceResponse.Message = "Frete cadastrado";
                 serviceResponse.Sucess = true;
@@ -49,7 +64,7 @@ namespace LojaTopMoveis.Service
             ServiceResponse<Freight> serviceResponse = new ServiceResponse<Freight>();
             try
             {
-                Freight? freight = await _context.Freights.FirstOrDefaultAsync();
+                Freight? freight = await _context.Freights.Include(a => a.Cities).FirstOrDefaultAsync();
 
                 if (freight == null)
                 {
@@ -70,18 +85,18 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Freight>>> Get()
+        public Task<ServiceResponse<List<Freight>>> Get()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<List<Freight>>> GetFilter(Freight category)
+        public Task<ServiceResponse<List<Freight>>> GetFilter(Freight category)
         {
             throw new NotImplementedException();
 
         }
 
-        public async Task<ServiceResponse<Freight>> Inactivate(Guid id)
+        public Task<ServiceResponse<Freight>> Inactivate(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -94,8 +109,6 @@ namespace LojaTopMoveis.Service
             {
                 Freight? freight1 = await _context.Freights.AsNoTracking().FirstOrDefaultAsync(a => a.Id == freight.Id);
 
-                
-
                 if (freight1 == null)
                 {
                     serviceResponse.Data = null;
@@ -105,6 +118,20 @@ namespace LojaTopMoveis.Service
                 else
                 {
                     freight.ChangeDate = DateTime.Now.ToLocalTime();
+                    if (freight.Cities != null && freight.Cities.Count > 0)
+                    {
+                        CityService cityService = new CityService(_context);
+                        foreach (City city in freight.Cities)
+                        {
+                            var success = cityService.Create(city);
+                            if (!success.Result.Sucess)
+                            {
+                                serviceResponse.Data = null;
+                                serviceResponse.Message = "Erro ao cadastrar cidade";
+                                serviceResponse.Sucess = false;
+                            }
+                        }
+                    }
                     _context.Freights.Update(freight);
                     await _context.SaveChangesAsync();
                     

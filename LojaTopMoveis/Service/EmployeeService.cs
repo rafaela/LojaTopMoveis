@@ -31,24 +31,23 @@ namespace LojaTopMoveis.Service
                 }
                 else
                 {
-                    UserService userService = new UserService(_context);
-                    var id = userService.Create(employee.Login);
 
-                    if(!id.Equals(""))
+                    if (employee != null && employee?.BirthDate != null)
                     {
-                        employee.Login.Id = id;
-                        _context.Employees.Add(employee);
-                        await _context.SaveChangesAsync();
-                        serviceResponse.Data = null;
-                        serviceResponse.Message = "Funcionário cadastrado";
-                        serviceResponse.Sucess = true;
+                        var dia = employee?.BirthDate?.Substring(0, 2);
+                        var mes = employee?.BirthDate?.Substring(2, 2);
+                        var ano = employee?.BirthDate?.Substring(4, 4);
+
+                        var data = dia + "/" + mes + "/" + ano;
+
+                        employee.BirthDate = data;
                     }
-                    else
-                    {
-                        serviceResponse.Data = null;
-                        serviceResponse.Message = "Erro ao cadastrar funcionário";
-                        serviceResponse.Sucess = false;
-                    }
+
+                    _context.Employees.Add(employee);
+                    await _context.SaveChangesAsync();
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Funcionário cadastrado";
+                    serviceResponse.Sucess = true;
 
                     
                 }
@@ -213,6 +212,19 @@ namespace LojaTopMoveis.Service
             {
                 Employee? employee1 = await _context.Employees.AsNoTracking().FirstOrDefaultAsync(a => a.Id == employee.Id);
 
+                if(employee?.BirthDate != null)
+                {
+                    var dia = employee?.BirthDate?.Substring(0, 2);
+                    var mes = employee?.BirthDate?.Substring(2, 2);
+                    var ano = employee?.BirthDate?.Substring(4, 4);
+
+                    var data = dia + "/" + mes + "/" + ano;
+
+                    employee.BirthDate = data;
+                }
+
+                
+
                 if (employee1 == null)
                 {
                     serviceResponse.Data = null;
@@ -221,8 +233,6 @@ namespace LojaTopMoveis.Service
                 }
                 else
                 {
-                    UserService userService = new UserService(_context);
-                    var id = userService.Create(employee.Login);
 
                     employee.ChangeDate = DateTime.Now.ToLocalTime();
                     _context.Employees.Update(employee);

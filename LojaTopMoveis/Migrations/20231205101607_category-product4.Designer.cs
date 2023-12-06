@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Topmoveis.Data;
 
@@ -11,9 +12,11 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    partial class LojaContextModelSnapshot : ModelSnapshot
+    [Migration("20231205101607_category-product4")]
+    partial class categoryproduct4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +82,7 @@ namespace LojaTopMoveis.Migrations
                     b.ToTable("Photos");
                 });
 
-            modelBuilder.Entity("LojaTopMoveis.Model.SubcategoriesProduct", b =>
+            modelBuilder.Entity("LojaTopMoveis.Model.SubcategoriesProducts", b =>
                 {
                     b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
@@ -489,31 +492,6 @@ namespace LojaTopMoveis.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("Topmoveis.Model.City", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CEP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ChangeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("FreightId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FreightId");
-
-                    b.ToTable("Cities");
-                });
-
             modelBuilder.Entity("Topmoveis.Model.Client", b =>
                 {
                     b.Property<Guid>("Id")
@@ -718,7 +696,7 @@ namespace LojaTopMoveis.Migrations
                         .HasForeignKey("ProductId");
                 });
 
-            modelBuilder.Entity("LojaTopMoveis.Model.SubcategoriesProduct", b =>
+            modelBuilder.Entity("LojaTopMoveis.Model.SubcategoriesProducts", b =>
                 {
                     b.HasOne("Topmoveis.Model.Product", null)
                         .WithMany("SubcategoriesProducts")
@@ -817,13 +795,6 @@ namespace LojaTopMoveis.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("Topmoveis.Model.City", b =>
-                {
-                    b.HasOne("Topmoveis.Model.Freight", null)
-                        .WithMany("Cities")
-                        .HasForeignKey("FreightId");
-                });
-
             modelBuilder.Entity("Topmoveis.Model.Client", b =>
                 {
                     b.HasOne("LojaTopMoveis.Model.User", "Login")
@@ -876,11 +847,6 @@ namespace LojaTopMoveis.Migrations
                     b.Navigation("Logins");
 
                     b.Navigation("Roles");
-                });
-
-            modelBuilder.Entity("Topmoveis.Model.Freight", b =>
-                {
-                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("Topmoveis.Model.Product", b =>

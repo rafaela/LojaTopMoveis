@@ -30,6 +30,7 @@ builder.Services.AddScoped<IPhoto, PhotosService>();
 builder.Services.AddScoped<ILoja<Freight>, FreightService>();
 builder.Services.AddScoped<ILoja<Client>, ClientService>();
 builder.Services.AddScoped<IAddress, AddressService>();
+builder.Services.AddScoped<ISubcategory, SubcategoryService>();
 
 
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration

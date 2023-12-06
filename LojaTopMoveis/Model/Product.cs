@@ -23,6 +23,7 @@ namespace Topmoveis.Model
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
         public DateTime ChangeDate { get; set; } = DateTime.Now.ToLocalTime();
         public List<Photo>? Photos { get; set; }
+        public List<SubcategoriesProduct>? SubcategoriesProducts { get; set; }
 
     }
 }

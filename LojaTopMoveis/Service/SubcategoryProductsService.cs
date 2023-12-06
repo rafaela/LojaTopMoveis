@@ -1,22 +1,22 @@
 ﻿using Loja.Model;
-using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Entity;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
 namespace LojaTopMoveis.Service
 {
-    public class SubcategoryService : ISubcategory
+    public class SubcategoryProductsService
     {
         private readonly LojaContext _context;
 
-        public SubcategoryService(LojaContext context)
+        public SubcategoryProductsService(LojaContext context)
         {
             _context = context;
         }
 
-        public async Task<bool> Create(List<Subcategory> subcategories, Guid categoryId)
+        public async Task<bool> Create(List<SubcategoriesProduct> subcategories)
         {
             try
             {
@@ -25,14 +25,14 @@ namespace LojaTopMoveis.Service
                     var lista = subcategories.ToList();
                     foreach (var sub in lista)
                     {
-                        Subcategory subcategory = new Subcategory();
+                        SubcategoriesProduct subcategory = new SubcategoriesProduct();
 
                         if(sub.Id == null)
                         {
-                            subcategory.Name = sub.Name;
-                            subcategory.CategoryId = categoryId;
+                            subcategory.SubcategoryId = sub.SubcategoryId;
+                            subcategory.ProductId = sub.ProductId;
 
-                            _context.Subcategories.Add(subcategory);
+                            _context.SubcategoriesProducts.Add(subcategory);
                         }
                         else
                         {
@@ -40,7 +40,7 @@ namespace LojaTopMoveis.Service
                             if(data != null)
                             {
                                 sub.ChangeDate = DateTime.Now.ToLocalTime();
-                                _context.Subcategories.Update(sub);
+                                _context.SubcategoriesProducts.Update(sub);
                             }
                         }
                         
@@ -60,16 +60,16 @@ namespace LojaTopMoveis.Service
 
         }
 
-        public bool Remove(Subcategory subcategory)
+        public bool Remove(SubcategoriesProduct subcategory)
         {
             try
             {
                 if (subcategory != null)
                 {
-                    var sub = _context.Photos.Where(a => a.ID == subcategory.Id).FirstOrDefault();
+                    var sub = _context.SubcategoriesProducts.Where(a => a.Id == subcategory.Id).FirstOrDefault();
                     if (sub == null)
                     {
-                        _context.Subcategories.Remove(subcategory);
+                        _context.SubcategoriesProducts.Remove(subcategory);
                     }
                     else
                     {
@@ -87,31 +87,6 @@ namespace LojaTopMoveis.Service
             }
             return true;
 
-        }
-
-        public async Task<ServiceResponse<List<Subcategory>>> SearchSubcategories(Guid id)
-        {
-
-            ServiceResponse<List<Subcategory>> serviceResponse = new ServiceResponse<List<Subcategory>>();
-            try
-            {
-                var subs = await _context.Subcategories.Where(a => a.CategoryId == id).ToListAsync();
-                if (subs.Count > 0)
-                {
-                    serviceResponse.Data = subs;
-                    serviceResponse.Message = "";
-                    serviceResponse.Sucess = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-
-        
         }
     }
 }

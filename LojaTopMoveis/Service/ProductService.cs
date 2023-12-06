@@ -26,7 +26,19 @@ namespace LojaTopMoveis.Service
                 product.Photos = null;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-                
+
+                SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
+                var cad = subcategoryService.Create(product.SubcategoriesProducts);
+
+                if (!cad.Result)
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Erro ao cadastrar/atualizar subcategoria do produto";
+                    serviceResponse.Sucess = false;
+
+                }
+
+
                 PhotosService photoService = new PhotosService(_context);
                 photosList?.ForEach(a => a.ProductId = product.Id);
 
@@ -37,7 +49,7 @@ namespace LojaTopMoveis.Service
                     serviceResponse.Message = "Erro ao cadastrar as imagens dos produtos";
                     serviceResponse.Sucess = false;
                 }
-                else
+                if(cadastro && cad.Result)
                 {
                     serviceResponse.Data = null;
                     serviceResponse.Message = "Produto cadastrado";
@@ -93,7 +105,7 @@ namespace LojaTopMoveis.Service
             ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
             try
             {
-                Product? product = await _context.Products.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
+                Product? product = await _context.Products.Include(a => a.Photos).Include(a => a.SubcategoriesProducts).FirstOrDefaultAsync(a => a.Id == id);
 
                 if (product == null)
                 {
@@ -204,6 +216,17 @@ namespace LojaTopMoveis.Service
 
                     await _context.SaveChangesAsync();
 
+                    SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
+                    var cad = subcategoryService.Create(product.SubcategoriesProducts);
+
+                    if (!cad.Result)
+                    {
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Erro ao cadastrar/atualizar subcategoria do produto";
+                        serviceResponse.Sucess = false;
+
+                    }
+
                     PhotosService photoService = new PhotosService(_context);
                     product.Photos?.ForEach(a => a.ProductId = product.Id);
 
@@ -214,7 +237,7 @@ namespace LojaTopMoveis.Service
                         serviceResponse.Message = "Erro ao cadastrar/atualizar as imagens dos produtos";
                         serviceResponse.Sucess = false;
                     }
-                    else
+                    if(cadastro && cad.Result)
                     {
                         serviceResponse.Data = null;
                         serviceResponse.Message = "Produto atualizado";
