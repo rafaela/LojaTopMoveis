@@ -1,18 +1,21 @@
 name: Deploy via ftp
-on: push: branches:
-        - main
-jobs:
-deploy:
-    name: Deploy
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
+on:
+  push:
+    branches:
+      - main
 
-    - name: FTP Deploy Locaweb
-    uses: locaweb/ftp-deploy@1.0.0
-    with:
-        host: ${{ secrets.hosttop }} 
-        user: ${{ secrets.usertop }}
-        password: ${{ secrets.passtop }}
-        localDir: "dist"
-        remoteDir: "web"
+jobs:
+        deploy:
+          name: Deploy
+          runs-on: ubuntu-latest
+          steps:
+          - uses: actions/checkout@v2
+
+          - name: FTP Deploy Locaweb
+            uses: locaweb/ftp-deploy@1.0.0
+            with:
+              host: ${{ secrets.hosttop }} 
+              user: ${{ secrets.usertop }}
+              password: ${{ secrets.passtop }}
+              localDir: "dist"
+
