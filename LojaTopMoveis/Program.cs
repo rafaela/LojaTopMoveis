@@ -33,7 +33,7 @@ builder.Services.AddScoped<IAddress, AddressService>();
 builder.Services.AddScoped<ISubcategory, SubcategoryService>();
 
 
-builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
+builder.Services.AddDbContext<LojaContext>(options => options.UseNpgsql(builder.Configuration
     .GetConnectionString("ServerConnection")));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
