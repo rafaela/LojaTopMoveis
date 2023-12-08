@@ -2,11 +2,11 @@ name: Deploy via ftp
 on: 
   push:
     branches:
-      - main
+      - master
 jobs:
         deploy:
           name: Deploy
-          runs-on: ubuntu-latest
+          runs-on: linux-latest
           steps:
           - uses: actions/checkout@v2
 
@@ -17,3 +17,4 @@ jobs:
               user: ${{ secrets.usertop }}
               password: ${{ secrets.passtop }}
               localDir: "dist"
+              remoteDir: "web"
