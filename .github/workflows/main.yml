@@ -19,8 +19,6 @@ jobs:
               key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
               restore-keys: |
                 ${{ runner.os }}-nuget
-          - name: Install dependencies
-            run: dotnet add package Newtonsoft.Json --version 12.0.1
 
           - name: FTP Deploy Locaweb
             uses: locaweb/ftp-deploy@1.0.0
