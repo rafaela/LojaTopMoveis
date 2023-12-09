@@ -6,7 +6,7 @@ on:
 jobs:
         deploy:
           name: Deploy
-          runs-on: linux-latest
+          runs-on: self-hosted
           steps:
           - uses: actions/checkout@v2
 
