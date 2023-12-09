@@ -15,4 +15,5 @@ jobs:
               host: ${{ secrets.hosttop }} 
               user: ${{ secrets.usertop }}
               password: ${{ secrets.passtop }}
+              localDir: "dist"
               remoteDir: "web"
