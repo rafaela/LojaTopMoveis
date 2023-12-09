@@ -26,4 +26,5 @@ jobs:
               host: ${{ secrets.hosttop }} 
               user: ${{ secrets.usertop }}
               password: ${{ secrets.passtop }}
+              remoteDir: "web/api"
 
