@@ -140,34 +140,9 @@ namespace LojaTopMoveis.Service
 
         }
 
-        public async Task<ServiceResponse<List<Employee>>> GetFilter(Employee employee)
+        public Task<ServiceResponse<List<Employee>>> GetFilter(Employee employee)
         {
-            ServiceResponse<List<Employee>> serviceResponse = new ServiceResponse<List<Employee>>();
-
-            /*try
-            {
-                var query = _context.Employees.AsQueryable();
-                if (employee.Name != null)
-                {
-                    query = query.Where(a => a.Name != null && a.Name.Equals(Employee.Name));
-                }
-                if (Employee.Inactive == true)
-                {
-                    query = query.Where(a => !a.Inactive);
-                }
-                else
-                {
-                    query = query.Where(a => a.Inactive);
-                }
-                serviceResponse.Data = await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }*/
-
-            return serviceResponse;
+            throw new NotImplementedException();
 
         }
 
