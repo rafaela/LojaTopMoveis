@@ -31,6 +31,7 @@ namespace LojaTopMoveis.Service
                         {
                             subcategory.SubcategoryId = sub.SubcategoryId;
                             subcategory.ProductId = sub.ProductId;
+                            subcategory.Name = sub.Name;
 
                             _context.SubcategoriesProducts.Add(subcategory);
                         }

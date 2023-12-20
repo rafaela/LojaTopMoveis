@@ -7,7 +7,8 @@ namespace LojaTopMoveis.Model
     public class SubcategoriesProduct
     {
         public Guid? Id { get; set; }
-        
+        public string? Name { get; set; }
+
         [ForeignKey("SubcategoryId")]
         public Guid? SubcategoryId { get; set; }
         [ForeignKey("ProductId")]

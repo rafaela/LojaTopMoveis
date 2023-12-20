@@ -7,7 +7,7 @@ using Topmoveis.Model;
 
 namespace LojaTopMoveis.Service
 {
-    public class ProductService : ILoja<Product>
+    public class ProductService : IProduct
     {
         private readonly LojaContext _context;
 
@@ -105,7 +105,7 @@ namespace LojaTopMoveis.Service
             ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
             try
             {
-                Product? product = await _context.Products.Include(a => a.Photos).Include(a => a.SubcategoriesProducts).FirstOrDefaultAsync(a => a.Id == id);
+                Product? product = await _context.Products.Include(a => a.Photos).Include(a => a.Category).Include(a => a.SubcategoriesProducts).FirstOrDefaultAsync(a => a.Id == id);
 
                 if (product == null)
                 {
@@ -132,7 +132,27 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                serviceResponse.Data = await _context.Products.Include(a => a.Category).ToListAsync();
+                serviceResponse.Data = await _context.Products.Include(a => a.Category).Include(a => a.Photos)
+                           .Include(a => a.SubcategoriesProducts).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
+
+        }
+
+        public async Task<ServiceResponse<List<Product>>> GetFeatured()
+        {
+            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+
+            try
+            {
+                serviceResponse.Data = await _context.Products.Include(a => a.Category).Include(a => a.Photos)
+                           .Include(a => a.SubcategoriesProducts).Where(a => a.FeaturedProduct).ToListAsync();
             }
             catch (Exception ex)
             {

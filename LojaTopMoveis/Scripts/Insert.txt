@@ -1,0 +1,9 @@
+﻿insert INTO Usuarios (Id, TwoFactorEnabled, Email, PasswordHash, AccessFailedCount, EmailConfirmed, LockoutEnabled, LockoutEndDateUtc, PhoneNumber, PhoneNumberConfirmed, SecurityStamp, UserName) VALUES ('42092f2b-b8c2-4881-8f45-662d5990954d', false, 'raafapaiva19@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', false, false, false, null, null, false, null, 'raafapaiva19@gmail.com')
+
+
+INSERT into Employees (Id, Name, Phone, CPF, Email, LoginID, BirthDate, Inactive, CreationDate, ChangeDate) values ('8026609e-a4e0-4077-bb02-3e448dbaaeca', 'Rafaela Paiva', '31983680993', '11888550694', 'raafapaiva19@gmail.com', '42092f2b-b8c2-4881-8f45-662d5990954d', '19/12/1995', false, '2023-11-02 07:45:49.9499382', '2023-11-02 07:45:49.9499382')
+
+
+  "ConnectionStrings": {
+    "ServerConnection": "Server=177.153.63.29;uid=aspnet;Database=bancotopmoveis;User Id=bancotopmoveis;Password=TopMoveis12#;"
+  },

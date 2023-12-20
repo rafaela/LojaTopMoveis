@@ -23,7 +23,7 @@ namespace Topmoveis.Data
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false, true)
                 .Build();
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("ServerConnection"));
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("ServerConnection"));
         }
 
         public DbSet<Product> Products { get; set; }

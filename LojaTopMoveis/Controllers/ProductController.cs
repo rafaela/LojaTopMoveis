@@ -11,9 +11,9 @@ namespace LojaTopMoveis.Controllers
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly ILoja<Product> _productInterface;
+        private readonly IProduct _productInterface;
 
-        public ProductController(ILoja<Product> productInterface)
+        public ProductController(IProduct productInterface)
         {
             _productInterface = productInterface;
         }
@@ -24,6 +24,14 @@ namespace LojaTopMoveis.Controllers
         {
             return Ok(await _productInterface.Get());
         }
+
+        [HttpGet]
+        [Route("/produtosdestaque")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetFeatured()
+        {
+            return Ok(await _productInterface.GetFeatured());
+        }
+
 
         [HttpPost("/produtos/0")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> CreateProducts(Product product)

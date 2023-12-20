@@ -22,7 +22,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ILoja<Product>, ProductService>();
+builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<ILoja<Category>, CategoryService>();
 builder.Services.AddScoped<ILoja<Employee>, EmployeeService>();
 builder.Services.AddScoped<ILoja<User>, TokenService>();
@@ -33,7 +33,7 @@ builder.Services.AddScoped<IAddress, AddressService>();
 builder.Services.AddScoped<ISubcategory, SubcategoryService>();
 
 
-builder.Services.AddDbContext<LojaContext>(options => options.UseNpgsql(builder.Configuration
+builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
     .GetConnectionString("ServerConnection")));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
