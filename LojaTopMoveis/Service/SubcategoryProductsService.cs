@@ -23,28 +23,19 @@ namespace LojaTopMoveis.Service
                 if (subcategories != null && subcategories.Count > 0)
                 {
                     var lista = subcategories.ToList();
+
+                    var subProducts = _context.SubcategoriesProducts.Where(a => a.ProductId == subcategories[0].ProductId).ToList();
+                    _context.SubcategoriesProducts.RemoveRange(subProducts);
+                    _context.SaveChangesAsync();
                     foreach (var sub in lista)
                     {
                         SubcategoriesProduct subcategory = new SubcategoriesProduct();
+                        subcategory.SubcategoryId = sub.SubcategoryId;
+                        var searchsub = _context.Subcategories.Where(a => a.Id == sub.SubcategoryId).FirstOrDefault();
+                        subcategory.ProductId = sub.ProductId;
+                        subcategory.Name = searchsub.Name;
 
-                        if(sub.Id == null)
-                        {
-                            subcategory.SubcategoryId = sub.SubcategoryId;
-                            subcategory.ProductId = sub.ProductId;
-                            subcategory.Name = sub.Name;
-
-                            _context.SubcategoriesProducts.Add(subcategory);
-                        }
-                        else
-                        {
-                            var data =  _context.Subcategories.Where(a => a.Id == sub.Id).FirstOrDefault();
-                            if(data != null)
-                            {
-                                sub.ChangeDate = DateTime.Now.ToLocalTime();
-                                _context.SubcategoriesProducts.Update(sub);
-                            }
-                        }
-                        
+                        _context.SubcategoriesProducts.Add(subcategory);
                     }
 
                     await _context.SaveChangesAsync();
