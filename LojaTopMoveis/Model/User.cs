@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
+using Topmoveis.Model;
 
 namespace LojaTopMoveis.Model
 {
@@ -26,5 +27,6 @@ namespace LojaTopMoveis.Model
 
         [Required(ErrorMessage = "Password é obrigatório!")]
         public override string? PasswordHash { get; set; }
+
     }
 }

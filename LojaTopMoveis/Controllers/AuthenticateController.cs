@@ -32,9 +32,9 @@ namespace LojaTopMoveis.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ServiceResponse<User>> LoginAsync(User user)
+        public async Task<ServiceResponse<Client>> LoginAsync(User user)
         {
-            ServiceResponse<User> serviceResponse = new ServiceResponse<User>();
+            ServiceResponse<Client> serviceResponse = new ServiceResponse<Client>();
             UserService userService = new UserService(_context);
             var hash = userService.QuickHash(user.PasswordHash);
             var login = await _context.Usuarios.Where(u => u.Email == user.Email && u.PasswordHash == hash).FirstOrDefaultAsync();
@@ -45,6 +45,12 @@ namespace LojaTopMoveis.Controllers
 
                 serviceResponse.Sucess = true;
                 serviceResponse.Token = token;
+                var cliente = _context.Clients.Where(a => a.Login.Id == login.Id).FirstOrDefault();
+                if(cliente != null)
+                {
+                    serviceResponse.Data = cliente;
+                }
+                
              
             }
             else
