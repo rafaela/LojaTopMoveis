@@ -5,13 +5,11 @@ namespace LojaTopMoveis.Interface
 {
     public interface ILoja<T>
     {
-        Task<ServiceResponse<List<T>>> Get();
-        Task<ServiceResponse<List<T>>> GetFilter(T t);
+        Task<ServiceResponse<List<T>>> Get(ServiceParameter<T> sp);
         Task<ServiceResponse<T>> Create(T t);
         Task<ServiceResponse<T>> GetByID(Guid id);
         Task<ServiceResponse<T>> Update(T t);
         Task<ServiceResponse<T>> Delete(Guid id);
-        Task<ServiceResponse<T>> Inactivate(Guid id);
 
     }
 }

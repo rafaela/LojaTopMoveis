@@ -20,9 +20,9 @@ namespace LojaTopMoveis.Controllers
 
         [HttpGet]
         [Route("/clientes")]
-        public async Task<ActionResult<ServiceResponse<Client>>> Get()
+        public async Task<ActionResult<ServiceResponse<Client>>> Get(ServiceParameter<Client> sp)
         {
-            return Ok(await _clientInterface.Get());
+            return Ok(await _clientInterface.Get(sp));
         }
 
         /*[HttpGet]

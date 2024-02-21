@@ -18,18 +18,11 @@ namespace LojaTopMoveis.Controllers
             _employeeInterface = employeeInterface;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/funcionarios")]
-        public async Task<ActionResult<ServiceResponse<Employee>>> Get()
+        public async Task<ActionResult<ServiceResponse<Employee>>> Get(ServiceParameter<Employee> sp)
         {
-            return Ok(await _employeeInterface.Get());
-        }
-
-        [HttpGet]
-        [Route("/funcionarios/buscas")]
-        public async Task<ActionResult<ServiceResponse<Employee>>> GetFilter(Employee employee)
-        {
-            return Ok(await _employeeInterface.GetFilter(employee));
+            return Ok(await _employeeInterface.Get(sp));
         }
 
         [HttpPost("/funcionarios/0")]

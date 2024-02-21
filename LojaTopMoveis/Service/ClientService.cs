@@ -98,7 +98,7 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Client>>> Get()
+        public async Task<ServiceResponse<List<Client>>> Get(ServiceParameter<Client> sp)
         {
             ServiceResponse<List<Client>> serviceResponse = new ServiceResponse<List<Client>>();
 

@@ -31,6 +31,8 @@ builder.Services.AddScoped<ILoja<Freight>, FreightService>();
 builder.Services.AddScoped<ILoja<Client>, ClientService>();
 builder.Services.AddScoped<IAddress, AddressService>();
 builder.Services.AddScoped<ISubcategory, SubcategoryService>();
+builder.Services.AddScoped<ILoja<Highlight>, HighlightService>();
+builder.Services.AddScoped<ILoja<Payment>, PaymentService>();
 
 
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration

@@ -87,7 +87,7 @@ namespace LojaTopMoveis.Service
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<List<City>>> Get()
+        public async Task<ServiceResponse<List<City>>> Get(ServiceParameter<City> sp)
         {
             ServiceResponse<List<City>> serviceResponse = new ServiceResponse<List<City>>();
 

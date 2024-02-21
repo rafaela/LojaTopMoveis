@@ -18,20 +18,12 @@ namespace LojaTopMoveis.Controllers
             _productInterface = productInterface;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/produtos")]
-        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts()
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts(ServiceParameter<Product> sp)
         {
-            return Ok(await _productInterface.Get());
+            return Ok(await _productInterface.Get(sp));
         }
-
-        [HttpGet]
-        [Route("/produtosdestaque")]
-        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetFeatured()
-        {
-            return Ok(await _productInterface.GetFeatured());
-        }
-
 
         [HttpPost("/produtos/0")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> CreateProducts(Product product)

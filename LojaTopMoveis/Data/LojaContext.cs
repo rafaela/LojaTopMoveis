@@ -38,6 +38,8 @@ namespace Topmoveis.Data
         public DbSet<Freight> Freights { get; set; }
         public DbSet<SubcategoriesProduct> SubcategoriesProducts { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<Highlight> Highlights { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

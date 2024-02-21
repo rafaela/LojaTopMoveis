@@ -85,7 +85,7 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<Freight>>> Get()
+        public Task<ServiceResponse<List<Freight>>> Get(ServiceParameter<Freight> sp)
         {
             throw new NotImplementedException();
         }

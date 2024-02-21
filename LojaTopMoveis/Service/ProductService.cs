@@ -30,13 +30,7 @@ namespace LojaTopMoveis.Service
                 SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
                 var cad = subcategoryService.Create(product.SubcategoriesProducts);
 
-                if (!cad.Result)
-                {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Erro ao cadastrar/atualizar subcategoria do produto";
-                    serviceResponse.Sucess = false;
-
-                }
+            
 
 
                 PhotosService photoService = new PhotosService(_context);
@@ -84,11 +78,24 @@ namespace LojaTopMoveis.Service
                 }
                 else
                 {
+                    var subs = _context.SubcategoriesProducts.Where(a => a.ProductId == product.Id).ToList();
+                    if(subs.Count > 0)
+                    {
+                        _context.SubcategoriesProducts.RemoveRange(subs);
+                    }
+                    await _context.SaveChangesAsync();
+
+                    var photos = _context.Photos.Where(a => a.ProductId == product.Id).ToList();
+                    if (photos.Count > 0)
+                    {
+                        _context.Photos.RemoveRange(photos);
+                    }
+                    await _context.SaveChangesAsync();
                     _context.Products.Remove(product);
 
                     await _context.SaveChangesAsync();
                     serviceResponse.Message = "Produto removido";
-                    serviceResponse.Sucess = false;
+                    serviceResponse.Sucess = true;
                 }
             }
             catch (Exception ex)
@@ -126,95 +133,53 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Product>>> Get()
+        public async Task<ServiceResponse<List<Product>>> Get(ServiceParameter<Product> sp)
         {
             ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
 
             try
             {
-                serviceResponse.Data = await _context.Products.Include(a => a.Category).Include(a => a.Photos)
-                           .Include(a => a.SubcategoriesProducts).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
+                var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
+                           .Include(a => a.SubcategoriesProducts).AsQueryable();
 
-            return serviceResponse;
-
-        }
-
-        public async Task<ServiceResponse<List<Product>>> GetFeatured()
-        {
-            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
-
-            try
-            {
-                serviceResponse.Data = await _context.Products.Include(a => a.Category).Include(a => a.Photos)
-                           .Include(a => a.SubcategoriesProducts).Where(a => a.FeaturedProduct).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-
-        }
-
-        public async Task<ServiceResponse<List<Product>>> GetFilter(Product product)
-        {
-            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
-
-            try
-            {
-                serviceResponse.Data = await _context.Products.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-
-        }
-
-        public async Task<ServiceResponse<Product>> Inactivate(Guid id)
-        {
-            ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
-
-            try
-            {
-                Product? product = await _context.Products.FirstOrDefaultAsync(a => a.Id == id);
-
-                if (product == null)
+                if (sp.Data != null && sp.Data.Name != null)
                 {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Produto não encontrado";
-                    serviceResponse.Sucess = false;
+                    query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
+                }
+                if (sp.Data != null && sp.Data.Inactive == true)
+                {
+                    query = query.Where(a => a.Inactive);
                 }
                 else
                 {
-                    product.Inactive = true;
-                    product.ChangeDate = DateTime.Now.ToLocalTime();
-                    _context.Products.Update(product);
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Produto inativado";
-                    serviceResponse.Sucess = true;
-
+                    query = query.Where(a => !a.Inactive);
                 }
+                if (sp.Data != null && sp.Data.FeaturedProduct == true)
+                {
+                    query = query.Where(a => a.FeaturedProduct);
+                }
+
+                serviceResponse.Total = query.Count();
+
+                query = query.OrderBy(a => a.Name);
+
+                if (sp.Take > 0)
+                {
+                    query = query.Skip(sp.Skip).Take(sp.Take);
+                }
+                serviceResponse.Data = await query.ToListAsync();
             }
             catch (Exception ex)
             {
                 serviceResponse.Message = ex.Message;
                 serviceResponse.Sucess = false;
             }
+
             return serviceResponse;
+
         }
 
+        
         public async Task<ServiceResponse<Product>> Update(Product product)
         {
                 ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();

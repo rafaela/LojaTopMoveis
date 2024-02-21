@@ -112,86 +112,44 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Category>>> Get()
-        {
-            ServiceResponse<List<Category>> serviceResponse = new ServiceResponse<List<Category>>();
-
-            try
-            {
-                serviceResponse.Data = await _context.Categories.Include(a => a.Subcategories).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-
-        }
-
-        public async Task<ServiceResponse<List<Category>>> GetFilter(Category category)
+        public async Task<ServiceResponse<List<Category>>> Get(ServiceParameter<Category> sp)
         {
             ServiceResponse<List<Category>> serviceResponse = new ServiceResponse<List<Category>>();
 
             try
             {
                 var query = _context.Categories.AsQueryable();
-                if (category.Name != null)
+                if (sp.Data != null && sp.Data.Name != null)
                 {
-                    query = query.Where(a => a.Name != null && a.Name.Equals(category.Name));
+                    query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
                 }
-                if (category.Inactive == true)
-                {
-                    query = query.Where(a => !a.Inactive);
-                }
-                else
+                if (sp.Data != null && sp.Data.Inactive == true)
                 {
                     query = query.Where(a => a.Inactive);
                 }
-                serviceResponse.Data = await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
-            }
-
-            return serviceResponse;
-
-        }
-
-        public async Task<ServiceResponse<Category>> Inactivate(Guid id)
-        {
-            ServiceResponse<Category> serviceResponse = new ServiceResponse<Category>();
-
-            try
-            {
-                Category? category = await _context.Categories.FirstOrDefaultAsync(a => a.Id == id);
-
-                if (category == null)
-                {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
-                }
                 else
                 {
-                    category.Inactive = true;
-                    category.ChangeDate = DateTime.Now.ToLocalTime();
-                    _context.Categories.Update(category);
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Message = "Produto inativado";
-                    serviceResponse.Sucess = true;
-
+                    query = query.Where(a => !a.Inactive);
                 }
+                serviceResponse.Total = query.Count();
+
+                query = query.OrderBy(a => a.Name);
+                
+                if(sp.Take > 0)
+                {
+                    query = query.Skip(sp.Skip).Take(sp.Take);
+                }
+                serviceResponse.Data = await query.ToListAsync();
+                
             }
             catch (Exception ex)
             {
                 serviceResponse.Message = ex.Message;
                 serviceResponse.Sucess = false;
             }
+
             return serviceResponse;
+
         }
 
         public async Task<ServiceResponse<Category>> Update(Category category)

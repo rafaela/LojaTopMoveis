@@ -7,9 +7,8 @@ namespace Topmoveis.Enums
 {
     public enum PaymentStatus
     {
-        Credit = 1,
-        Debit = 2,
-        Ticket = 3,
-        Pix = 4
+        Pending = 1,
+        Paid = 2,
+        Canceled = 3
     }
 }

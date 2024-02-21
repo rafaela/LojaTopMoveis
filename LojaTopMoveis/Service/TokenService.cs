@@ -45,7 +45,7 @@ namespace LojaTopMoveis.Service
             return ci;
         }
 
-        public Task<ServiceResponse<List<User>>> Get()
+        public Task<ServiceResponse<List<User>>> Get(ServiceParameter<User> sp)
         {
             throw new NotImplementedException();
         }

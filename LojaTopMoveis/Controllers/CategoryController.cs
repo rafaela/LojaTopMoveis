@@ -18,20 +18,14 @@ namespace LojaTopMoveis.Controllers
             _categoryInterface = categoryInterface;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/categorias")]
-        public async Task<ActionResult<ServiceResponse<Category>>> GetCategories()
+        public async Task<ActionResult<ServiceResponse<Category>>> GetCategories(ServiceParameter<Category> sp)
         {
-            return Ok(await _categoryInterface.Get());
+            return Ok(await _categoryInterface.Get(sp));
         }
 
-        [HttpGet]
-        [Route("/categorias/buscas")]
-        public async Task<ActionResult<ServiceResponse<Category>>> GetCategoriesFilter(Category category)
-        {
-            return Ok(await _categoryInterface.GetFilter(category));
-        }
-
+        
         [HttpPost("/categorias/0")]
         public async Task<ActionResult<ServiceResponse<Category>>> CreateCategories(Category category)
         {

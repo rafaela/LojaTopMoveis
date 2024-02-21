@@ -2,6 +2,8 @@
 using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
@@ -15,6 +17,13 @@ namespace LojaTopMoveis.Service
         {
             _context = context;
         }
+
+        /*public string QuickHash(string input)
+        {
+            var inputBytes = Encoding.UTF8.GetBytes(input);
+            var inputHash = MD5.HashData(inputBytes);
+            return Convert.ToHexString(inputHash);
+        }*/
 
         public async Task<ServiceResponse<Employee>> Create(Employee employee)
         {
@@ -45,6 +54,10 @@ namespace LojaTopMoveis.Service
 
                     _context.Employees.Add(employee);
                     await _context.SaveChangesAsync();
+
+
+                    UserService us = new UserService(_context);
+                    us.Create(employee.Login);
                     serviceResponse.Data = null;
                     serviceResponse.Message = "Funcionário cadastrado";
                     serviceResponse.Sucess = true;
@@ -122,13 +135,37 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Employee>>> Get()
+        public async Task<ServiceResponse<List<Employee>>> Get(ServiceParameter<Employee> sp)
         {
             ServiceResponse<List<Employee>> serviceResponse = new ServiceResponse<List<Employee>>();
 
             try
             {
-                serviceResponse.Data = await _context.Employees.ToListAsync();
+
+                var query = _context.Employees.AsQueryable();
+
+                if (sp.Data != null && sp.Data.Name != null)
+                {
+                    query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
+                }
+                if (sp.Data != null && sp.Data.Inactive == true)
+                {
+                    query = query.Where(a => a.Inactive);
+                }
+                else
+                {
+                    query = query.Where(a => !a.Inactive);
+                }
+
+                serviceResponse.Total = query.Count();
+
+                query = query.OrderBy(a => a.Name);
+
+                if (sp.Take > 0)
+                {
+                    query = query.Skip(sp.Skip).Take(sp.Take);
+                }
+                serviceResponse.Data = await query.ToListAsync();
             }
             catch (Exception ex)
             {
