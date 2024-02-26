@@ -113,6 +113,10 @@ namespace LojaTopMoveis.Service
                 {
                     query = query.Where(a => a.Inactive.HasValue && (bool)a.Inactive);
                 }
+                else
+                {
+                    query = query.Where(a => !a.Inactive.HasValue || !(bool)a.Inactive);
+                }
                 
                 serviceResponse.Total = query.Count();
 
@@ -123,10 +127,7 @@ namespace LojaTopMoveis.Service
                     query = query.Skip(sp.Skip).Take(sp.Take);
                 }
                 var lista = await query.ToListAsync();
-                foreach (var q in lista)
-                {
-                    q.Image = null;
-                }
+                
                 serviceResponse.Data = lista;
                 
             }

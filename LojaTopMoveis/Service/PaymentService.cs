@@ -107,7 +107,11 @@ namespace LojaTopMoveis.Service
                 {
                     query = query.Where(a => a.Inactive.HasValue && (bool)a.Inactive);
                 }
-                
+                else
+                {
+                    query = query.Where(a => !a.Inactive.HasValue || !(bool)a.Inactive);
+                }
+
                 serviceResponse.Total = query.Count();
 
                 query = query.OrderBy(a => a.Name);

@@ -238,5 +238,72 @@ namespace LojaTopMoveis.Service
 
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<List<Product>>> GetByCategory(Guid id)
+        {
+            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+
+            try
+            {
+                var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
+                           .Include(a => a.SubcategoriesProducts).Where(a => a.CategoryID == id).AsQueryable();
+
+                serviceResponse.Data = await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<Product>>> GetBySubcategory(Guid id)
+        {
+            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+            try
+            {
+                var subs = _context.SubcategoriesProducts.Where(a => a.SubcategoryId == id).AsQueryable();
+    
+
+                foreach(var sub in subs)
+                {
+                    var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
+                           .Include(a => a.SubcategoriesProducts).Where(a => a.CategoryID == sub.ProductId).AsQueryable();
+                    var itens = await query.ToListAsync();
+                    serviceResponse.Data.AddRange(itens);
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<Product>>> GetFeatured()
+        {
+            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+
+            try
+            {
+                var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
+                           .Include(a => a.SubcategoriesProducts).Where(a => a.FeaturedProduct).AsQueryable();
+
+                serviceResponse.Data = await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
+        }
     }
 }

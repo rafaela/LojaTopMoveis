@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LojaTopMoveis.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,8 +11,9 @@ namespace Topmoveis.Model
     {
         public Guid Id { get; set; }
         public Client? Client { get; set; }
-        public List<Product>? Products { get; set; }
-        public decimal? Amount { get; set; }
+        public List<ProductsSale>? ProductsSale { get; set; }
+        public string? Name { get; set; }
+        public decimal? ValorTotal { get; set; }
         public PaymentMethods PaymentMethod { get; set; }
         public DateTime DateSale { get; set; }
         public DateTime DateDelivery { get; set; }

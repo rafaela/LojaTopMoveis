@@ -10,6 +10,10 @@ namespace LojaTopMoveis.Interface
         Task<ServiceResponse<Product>> GetByID(Guid id);
         Task<ServiceResponse<Product>> Update(Product product);
         Task<ServiceResponse<Product>> Delete(Guid id);
+        Task<ServiceResponse<List<Product>>> GetByCategory(Guid id);
+        Task<ServiceResponse<List<Product>>> GetBySubcategory(Guid id);
+        Task<ServiceResponse<List<Product>>> GetFeatured();
+
 
     }
 }

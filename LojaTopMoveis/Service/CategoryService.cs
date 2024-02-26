@@ -118,7 +118,7 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                var query = _context.Categories.AsQueryable();
+                var query = _context.Categories.Include(a => a.Subcategories).AsQueryable();
                 if (sp.Data != null && sp.Data.Name != null)
                 {
                     query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
