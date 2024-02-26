@@ -38,6 +38,12 @@ namespace LojaTopMoveis.Controllers
             return Ok(await _productInterface.GetByID(id));
         }
 
+        [Route("/produtosdestaque")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetFeatured()
+        {
+            return Ok(await _productInterface.GetFeatured());
+        }
+
 
         /*[HttpPut("/produtos/id")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> InactivateProduct(Guid id)
@@ -56,6 +62,21 @@ namespace LojaTopMoveis.Controllers
         {
             return Ok(await _productInterface.Delete(id));
         }
+
+        [HttpGet]
+        [Route("/categoriaproduto/{id}")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetByCategory(Guid id)
+        {
+            return Ok(await _productInterface.GetByCategory(id));
+        }
+
+        [HttpGet]
+        [Route("/subcategoriaproduto/{id}")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetBySubcategory(Guid id)
+        {
+            return Ok(await _productInterface.GetBySubcategory(id));
+        }
+
     }
     
     
