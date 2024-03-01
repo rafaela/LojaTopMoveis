@@ -33,7 +33,7 @@ builder.Services.AddScoped<IAddress, AddressService>();
 builder.Services.AddScoped<ISubcategory, SubcategoryService>();
 builder.Services.AddScoped<ILoja<Highlight>, HighlightService>();
 builder.Services.AddScoped<ILoja<Payment>, PaymentService>();
-builder.Services.AddScoped<IProductsSale, ProductSaleService>();
+builder.Services.AddScoped<ISale, SaleService>();
 
 
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration

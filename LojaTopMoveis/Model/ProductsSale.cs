@@ -14,6 +14,7 @@ namespace LojaTopMoveis.Model
         
         [ForeignKey("ProductId")]
         public Guid? ProductId { get; set; }
+        public int Amount { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
         public DateTime ChangeDate { get; set; } = DateTime.Now.ToLocalTime();
     }

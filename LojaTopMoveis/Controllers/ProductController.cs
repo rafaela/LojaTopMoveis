@@ -25,19 +25,22 @@ namespace LojaTopMoveis.Controllers
             return Ok(await _productInterface.Get(sp));
         }
 
-        [HttpPost("/produtos/0")]
+        [HttpPost]
+        [Route("/produtos/0")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> CreateProducts(Product product)
         {
             return Ok(await _productInterface.Create(product));
         }
 
 
-        [HttpGet("/produtos/{id}")]
+        [HttpGet]
+        [Route("/produtos/{id}")]
         public async Task<ActionResult<ServiceResponse<Product>>> GetById(Guid id)
         {
             return Ok(await _productInterface.GetByID(id));
         }
 
+        [HttpGet]
         [Route("/produtosdestaque")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> GetFeatured()
         {
@@ -51,13 +54,15 @@ namespace LojaTopMoveis.Controllers
             return Ok(await _productInterface.InactivateProduct(id));
         }*/
 
-        [HttpPut("/produtos/{id}")]
+        [HttpPut]
+        [Route("/produtos/{id}")]
         public async Task<ActionResult<ServiceResponse<Product>>> Update(Product product)
         {
             return Ok(await _productInterface.Update(product));
         }
 
-        [HttpDelete("/produtos/{id}")]
+        [HttpDelete]
+        [Route("/produtos/{id}")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> DeleteProducts(Guid id)
         {
             return Ok(await _productInterface.Delete(id));
