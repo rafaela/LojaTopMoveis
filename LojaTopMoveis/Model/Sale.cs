@@ -21,7 +21,7 @@ namespace Topmoveis.Model
         public decimal? ValorTotal { get; set; }
         public PaymentMethods PaymentMethod { get; set; }
         public DateTime DateSale { get; set; }
-        public DateTime DateDelivery { get; set; }
+        public DateTime? DateDelivery { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DeliveryStatus DeliveryStatus { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();

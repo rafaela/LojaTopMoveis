@@ -10,9 +10,9 @@ namespace Topmoveis.Enums
     {
         [Description("Pendente")]
         Pending = 1,
-        [Description("Pedido aprovado")]
+        [Description("Aprovado")]
         RequestApproved = 2,
-        [Description("Pedido sendo separado")]
+        [Description("Sendo separado")]
         SeparateProducts = 3,
         [Description("Saiu para a entrega")]
         OutForDelivery = 4,

@@ -9,6 +9,7 @@ namespace Topmoveis.Model
     {
         public Guid Id { get; set; }
         public string? CEP { get; set; }
+        public decimal? Value { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
         public DateTime ChangeDate { get; set; } = DateTime.Now.ToLocalTime();
     }

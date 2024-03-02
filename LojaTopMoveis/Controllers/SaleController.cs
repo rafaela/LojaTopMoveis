@@ -20,7 +20,7 @@ namespace LojaTopMoveis.Controllers
 
         [HttpPost]
         [Route("/vendas")]
-        public async Task<ActionResult<ServiceResponse<List<Sale>>>> Get(ServiceParameter<Sale> sp)
+        public async Task<ActionResult<ServiceResponse<List<VendasResponse>>>> Get(ServiceParameter<VendasResponse> sp)
         {
             return Ok(await _saleInterface.Get(sp));
         }
@@ -34,7 +34,7 @@ namespace LojaTopMoveis.Controllers
 
         [HttpGet]
         [Route("/vendas/{id}")]
-        public async Task<ActionResult<ServiceResponse<Sale>>> GetById(Guid id)
+        public async Task<ActionResult<ServiceResponse<VendasResponse>>> GetById(Guid id)
         {
             return Ok(await _saleInterface.GetByID(id));
         }
@@ -46,14 +46,14 @@ namespace LojaTopMoveis.Controllers
         }*/
 
         [HttpPut]
-        [Route("/vendas/{id}")]
+        [Route("/vendas1/{id}")]
         public async Task<ActionResult<ServiceResponse<Sale>>> Update(Sale sale)
         {
             return Ok(await _saleInterface.Update(sale));
         }
 
         [HttpDelete]
-        [Route("/vendas/{id}")]
+        [Route("/vendas2/{id}")]
         public async Task<ActionResult<ServiceResponse<List<Sale>>>> Delete(Guid id)
         {
             return Ok(await _saleInterface.Delete(id));
@@ -71,6 +71,13 @@ namespace LojaTopMoveis.Controllers
         public async Task<ActionResult<ServiceResponse<List<Sale>>>> GetDataSale(Guid id)
         {
             return Ok(await _saleInterface.GetDataSale(id));
+        }
+
+        [HttpGet]
+        [Route("/entrega/{id}")]
+        public async Task<ActionResult<ServiceResponse<List<Sale>>>> ChangeStatusDelivery(Guid id)
+        {
+            return Ok(await _saleInterface.ChangeStatusDelivery(id));
         }
 
 

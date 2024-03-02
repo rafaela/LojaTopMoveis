@@ -23,6 +23,9 @@ namespace Topmoveis.Model
         public string? DateSale { get; set; }
         public string? DateDelivery { get; set; }
         public string? PaymentStatus { get; set; }
+        public PaymentStatus? EPaymentStatus { get; set; }
+        public DeliveryStatus? EDeliveryStatus { get; set; }
+
         public string? DeliveryStatus { get; set; }
         public string? CreationDate { get; set; }
         public string? ChangeDate { get; set; }

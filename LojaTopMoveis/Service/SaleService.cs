@@ -32,6 +32,7 @@ namespace LojaTopMoveis.Service
             {
                 sale.Name = DateTime.Now.ToString().Replace("/", "").Replace(":", "").Trim();
                 sale.DateSale = DateTime.Now;
+                sale.DateDelivery = null;
                 sale.PaymentStatus = Topmoveis.Enums.PaymentStatus.Pending;
                 sale.DeliveryStatus = Topmoveis.Enums.DeliveryStatus.Pending;
                 foreach(var p in sale.ProductsSale)
@@ -84,21 +85,34 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Sale>> GetByID(Guid id)
+        public async Task<ServiceResponse<VendasResponse>> GetByID(Guid id)
         {
-            ServiceResponse<Sale> serviceResponse = new ServiceResponse<Sale>();
-            try
-            {
-                Sale? sale = await _context.Sales.Include(a => a.ProductsSale).FirstOrDefaultAsync(a => a.Id == id);
+            ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
+            try {
+                var l = await _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
 
-                if (sale == null)
+                VendasResponse vr = new VendasResponse();
+                vr.Id = l.Id;
+                vr.Name = l.Name;
+                vr.DateSale = l.DateSale.ToString("dd/MM/yyyy");
+                vr.PaymentMethod = Enumeradores.GetDescription(l.PaymentMethod);
+                vr.PaymentStatus = Enumeradores.GetDescription(l.PaymentStatus);
+                vr.DateDelivery = l.DateDelivery != null ? l.DateDelivery.Value.ToString("dd/MM/yyyy") : "";
+                vr.DeliveryStatus = Enumeradores.GetDescription(l.DeliveryStatus);
+                vr.ValorTotal = l.ValorTotal;
+
+                vr.Products = new List<Product>();
+                foreach (var p in l.ProductsSale)
                 {
-                    serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
-                    serviceResponse.Sucess = false;
+                    var prod = _context.Products.Include(a => a.Photos).Where(a => a.Id == p.ProductId).FirstOrDefault();
+                    if (prod != null)
+                    {
+                        prod.Amount = p.Amount;
+                    }
+                    vr.Products.Add(prod);
                 }
 
-                serviceResponse.Data = sale;
+                serviceResponse.Data = vr;
 
             }
             catch (Exception ex)
@@ -108,18 +122,29 @@ namespace LojaTopMoveis.Service
             }
 
             return serviceResponse;
+
         }
 
-        public async Task<ServiceResponse<List<Sale>>> Get(ServiceParameter<Sale> sp)
+        public async Task<ServiceResponse<List<VendasResponse>>> Get(ServiceParameter<VendasResponse> sp)
         {
-            ServiceResponse<List<Sale>> serviceResponse = new ServiceResponse<List<Sale>>();
+            ServiceResponse<List<VendasResponse>> serviceResponse = new ServiceResponse<List<VendasResponse>>();
 
             try
             {
-                var query = _context.Sales.Include(a => a.ProductsSale).AsQueryable();
+                var query = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).AsQueryable();
                 if (sp.Data != null && sp.Data.Name != null)
                 {
                     query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
+                }
+
+                if (sp.Data != null && sp.Data.EPaymentStatus != null && sp.Data.EPaymentStatus != 0)
+                {
+                    query = query.Where(a => a.PaymentStatus == sp.Data.EPaymentStatus);
+                }
+
+                if (sp.Data != null && sp.Data.EDeliveryStatus != null && sp.Data.EDeliveryStatus != 0)
+                {
+                    query = query.Where(a => a.DeliveryStatus == sp.Data.EDeliveryStatus);
                 }
 
                 serviceResponse.Total = query.Count();
@@ -130,7 +155,24 @@ namespace LojaTopMoveis.Service
                 {
                     query = query.Skip(sp.Skip).Take(sp.Take);
                 }
-                serviceResponse.Data = await query.ToListAsync();
+                var lista = await query.ToListAsync();
+                List<VendasResponse> vendas = new List<VendasResponse>();
+                foreach (var l in lista)
+                {
+                    VendasResponse vr = new VendasResponse();
+                    vr.Id = l.Id;
+                    vr.Name = l.Name;
+                    vr.DateSale = l.DateSale.ToString("dd/MM/yyyy");
+                    vr.PaymentMethod = Enumeradores.GetDescription(l.PaymentMethod);
+                    vr.PaymentStatus = Enumeradores.GetDescription(l.PaymentStatus);
+                    vr.DateDelivery = l.DateDelivery != null ? l.DateDelivery.Value.ToString("dd/MM/yyyy") : "";
+                    vr.DeliveryStatus = Enumeradores.GetDescription(l.DeliveryStatus);
+                    vr.ValorTotal = l.ValorTotal;
+
+                    vendas.Add(vr);
+                }
+
+                serviceResponse.Data = vendas;
 
             }
             catch (Exception ex)
@@ -208,7 +250,7 @@ namespace LojaTopMoveis.Service
                     vr.DateSale = l.DateSale.ToString("dd/MM/yyyy");
                     vr.PaymentMethod = Enumeradores.GetDescription(l.PaymentMethod);
                     vr.PaymentStatus = Enumeradores.GetDescription(l.PaymentStatus);
-                    vr.DateDelivery = l.DateDelivery.ToString("dd/MM/yyyy");
+                    vr.DateDelivery = l.DateDelivery != null ? l.DateDelivery.Value.ToString("dd/MM/yyyy") : "";
                     vr.DeliveryStatus = Enumeradores.GetDescription(l.DeliveryStatus);
                     vr.ValorTotal = l.ValorTotal;
 
@@ -237,6 +279,54 @@ namespace LojaTopMoveis.Service
 
             return serviceResponse;
 
+        }
+
+        public async Task<ServiceResponse<VendasResponse>> ChangeStatusDelivery(Guid id)
+        {
+            ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
+            try
+            {
+                var sale = await _context.Sales.AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
+
+                if(sale != null)
+                {
+                    if(sale.DeliveryStatus == DeliveryStatus.Pending)
+                    {
+                        sale.DeliveryStatus = DeliveryStatus.RequestApproved;
+                    }
+                    else if (sale.DeliveryStatus == DeliveryStatus.RequestApproved)
+                    {
+                        sale.DeliveryStatus = DeliveryStatus.SeparateProducts;
+                    }
+                    else if (sale.DeliveryStatus == DeliveryStatus.SeparateProducts)
+                    {
+                        sale.DeliveryStatus = DeliveryStatus.OutForDelivery;
+                    }
+                    else if (sale.DeliveryStatus == DeliveryStatus.OutForDelivery)
+                    {
+                        sale.DeliveryStatus = DeliveryStatus.Delivered;
+                        sale.DateDelivery = DateTime.Now;
+                    }
+                    else
+                    {
+                        sale.DeliveryStatus = DeliveryStatus.Returned;
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+
+                VendasResponse venda = new VendasResponse();
+                venda.DeliveryStatus = Enumeradores.GetDescription(sale.DeliveryStatus);
+                serviceResponse.Data = venda;
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
         }
     }
 }
