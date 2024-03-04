@@ -15,6 +15,10 @@ namespace Topmoveis.Model
         [ForeignKey("ClientId")]
         public Guid? ClientId { get; set; }
         public Client? Client { get; set; }
+
+        [ForeignKey("AddressId")]
+        public Guid? AddressId { get; set; }
+        public Address? Address { get; set; }
         public List<ProductsSale>? ProductsSale { get; set; }
         public List<Product>? Products { get; set; }
         public string? Name { get; set; }

@@ -80,6 +80,13 @@ namespace LojaTopMoveis.Controllers
             return Ok(await _saleInterface.ChangeStatusDelivery(id));
         }
 
+        [HttpGet]
+        [Route("/pagamento/{id}")]
+        public async Task<ActionResult<ServiceResponse<List<Sale>>>> ChangeStatusPayment(Guid id)
+        {
+            return Ok(await _saleInterface.ChangeStatusPayment(id));
+        }
+
 
 
     }

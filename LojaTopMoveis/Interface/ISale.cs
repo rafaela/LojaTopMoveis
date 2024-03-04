@@ -13,6 +13,8 @@ namespace LojaTopMoveis.Interface
         Task<ServiceResponse<Sale>> ChangeStatusSale(Sale sale);
         Task<ServiceResponse<List<VendasResponse>>> GetDataSale(Guid id);
         Task<ServiceResponse<VendasResponse>> ChangeStatusDelivery(Guid id);
+        Task<ServiceResponse<VendasResponse>> ChangeStatusPayment(Guid id);
+
 
     }
 }

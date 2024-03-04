@@ -89,7 +89,7 @@ namespace LojaTopMoveis.Service
         {
             ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
             try {
-                var l = await _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
+                var l = await _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).Include(a => a.Address).AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
 
                 VendasResponse vr = new VendasResponse();
                 vr.Id = l.Id;
@@ -100,6 +100,7 @@ namespace LojaTopMoveis.Service
                 vr.DateDelivery = l.DateDelivery != null ? l.DateDelivery.Value.ToString("dd/MM/yyyy") : "";
                 vr.DeliveryStatus = Enumeradores.GetDescription(l.DeliveryStatus);
                 vr.ValorTotal = l.ValorTotal;
+                vr.Address = l.Address;
 
                 vr.Products = new List<Product>();
                 foreach (var p in l.ProductsSale)
@@ -131,7 +132,7 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                var query = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).AsQueryable();
+                var query = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).Include(a => a.Address).AsQueryable();
                 if (sp.Data != null && sp.Data.Name != null)
                 {
                     query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
@@ -149,7 +150,7 @@ namespace LojaTopMoveis.Service
 
                 serviceResponse.Total = query.Count();
 
-                query = query.OrderBy(a => a.Name);
+                query = query.OrderBy(a => a.CreationDate);
 
                 if (sp.Take > 0)
                 {
@@ -223,22 +224,50 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<Sale>> ChangeStatusSale(Guid id)
+        public async Task<ServiceResponse<VendasResponse>> ChangeStatusPayment(Guid id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
+            try
+            {
+                var sale = await _context.Sales.AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
+
+                if (sale != null)
+                {
+                    if (sale.PaymentStatus == PaymentStatus.Pending)
+                    {
+                        sale.PaymentStatus = PaymentStatus.Paid;
+                    }
+                    else
+                    {
+                        sale.PaymentStatus = PaymentStatus.Canceled;
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+
+                VendasResponse venda = new VendasResponse();
+                venda.PaymentStatus = Enumeradores.GetDescription(sale.PaymentStatus);
+                serviceResponse.Sucess = true;
+                serviceResponse.Data = venda;
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
         }
 
-        public Task<ServiceResponse<Sale>> ChangeStatusSale(Sale sale)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public async Task<ServiceResponse<List<VendasResponse>>> GetDataSale(Guid id)
         {
             ServiceResponse<List<VendasResponse>> serviceResponse = new ServiceResponse<List<VendasResponse>>();
             try
             {
-                var query = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client)
+                var query = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).Include(a => a.Address)
                         .Where(a => a.ClientId == id).AsQueryable();
 
                 var lista = await query.ToListAsync();
@@ -328,5 +357,12 @@ namespace LojaTopMoveis.Service
 
             return serviceResponse;
         }
+
+        public Task<ServiceResponse<Sale>> ChangeStatusSale(Sale sale)
+        {
+            throw new NotImplementedException();
+        }
+
+     
     }
 }

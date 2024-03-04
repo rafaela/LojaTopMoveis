@@ -16,6 +16,7 @@ namespace Topmoveis.Model
         [ForeignKey("ClientId")]
         public Guid? ClientId { get; set; }
         public Client? Client { get; set; }
+        public Address? Address { get; set; }
         public List<Product>? Products { get; set; }
         public string? Name { get; set; }
         public decimal? ValorTotal { get; set; }

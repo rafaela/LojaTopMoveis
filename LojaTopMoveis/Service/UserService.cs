@@ -70,9 +70,8 @@ namespace LojaTopMoveis.Service
                     var usuario = _context.Usuarios.Where(a => a.Email == user.Email).FirstOrDefault();
                     if(usuario != null)
                     {
-                        user.UserName = user.Email;
-                        user.PasswordHash = QuickHash(user.PasswordHash);
-                        _context.Usuarios.Add(user);
+                        usuario.UserName = user.Email;
+                        usuario.PasswordHash = QuickHash(user.PasswordHash);
                         _context.SaveChanges();
                     }
                     else

@@ -27,7 +27,7 @@ namespace LojaTopMoveis.Controllers
         }
 
         [HttpGet("/frete/0")]
-        public async Task<ActionResult<ServiceResponse<Freight>>> GetCategoryById(Guid id)
+        public async Task<ActionResult<ServiceResponse<Freight>>> Get(Guid id)
         {
             return Ok(await _freightInterface.GetByID(id));
         }
