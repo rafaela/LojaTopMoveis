@@ -30,6 +30,7 @@ namespace Topmoveis.Model
         public DeliveryStatus DeliveryStatus { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
         public DateTime ChangeDate { get; set; } = DateTime.Now.ToLocalTime();
+        public int? Quantityparcels { get; set; }
 
     }
 }
