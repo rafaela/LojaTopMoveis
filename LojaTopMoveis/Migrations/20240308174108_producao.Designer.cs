@@ -12,8 +12,8 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    [Migration("20240226165001_sales2")]
-    partial class sales2
+    [Migration("20240308174108_producao")]
+    partial class producao
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,6 +148,9 @@ namespace LojaTopMoveis.Migrations
                     b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ChangeDate")
                         .HasColumnType("datetime2");
@@ -602,6 +605,9 @@ namespace LojaTopMoveis.Migrations
                     b.Property<Guid?>("FreightId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("Value")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FreightId");
@@ -751,12 +757,17 @@ namespace LojaTopMoveis.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryID");
+
+                    b.HasIndex("SaleId");
 
                     b.ToTable("Products");
                 });
@@ -765,6 +776,9 @@ namespace LojaTopMoveis.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AddressId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ChangeDate")
@@ -776,7 +790,7 @@ namespace LojaTopMoveis.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateDelivery")
+                    b.Property<DateTime?>("DateDelivery")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateSale")
@@ -794,10 +808,15 @@ namespace LojaTopMoveis.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Quantityparcels")
+                        .HasColumnType("int");
+
                     b.Property<decimal?>("ValorTotal")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("ClientId");
 
@@ -948,14 +967,24 @@ namespace LojaTopMoveis.Migrations
                         .WithMany()
                         .HasForeignKey("CategoryID");
 
+                    b.HasOne("Topmoveis.Model.Sale", null)
+                        .WithMany("Products")
+                        .HasForeignKey("SaleId");
+
                     b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Topmoveis.Model.Sale", b =>
                 {
+                    b.HasOne("Topmoveis.Model.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
+
                     b.HasOne("Topmoveis.Model.Client", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId");
+
+                    b.Navigation("Address");
 
                     b.Navigation("Client");
                 });
@@ -988,6 +1017,8 @@ namespace LojaTopMoveis.Migrations
 
             modelBuilder.Entity("Topmoveis.Model.Sale", b =>
                 {
+                    b.Navigation("Products");
+
                     b.Navigation("ProductsSale");
                 });
 #pragma warning restore 612, 618
