@@ -9,7 +9,7 @@ namespace Topmoveis.Model
     {
         public Guid Id { get; set; }
         public decimal? ValueKm { get; set; }
-        public string? ValuePriceFreeShipping { get; set; }
+        public decimal? ValuePriceFreeShipping { get; set; }
         public string? CityFreeShipping { get; set; }
         public int? TimeDeliveryDays { get; set; }
         public bool FreeShipping { get; set; } = false;

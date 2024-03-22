@@ -31,27 +31,28 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                var searchEmail = _context.Clients.Where(a => a.Email == client.Email).FirstOrDefault();
-                if (searchEmail != null)
+                if(client.Id != Guid.Empty || client.Id != null)
                 {
-                    serviceResponse.Message = "E-mail já cadastrado";
-                    serviceResponse.Sucess = false;
-                    return serviceResponse;
+                    _context.Update(client);
                 }
-                var searchCPF = _context.Clients.Where(a => a.CPF == client.CPF).FirstOrDefault();
-                if (searchCPF != null)
+                else
                 {
-                    serviceResponse.Message = "Cliente já cadastrado";
-                    serviceResponse.Sucess = false;
-                    return serviceResponse;
+                    var searchEmail = _context.Clients.Where(a => a.Email == client.Email || a.CPF == client.CPF).FirstOrDefault();
+                    if (searchEmail != null)
+                    {
+                        serviceResponse.Message = "Dados já cadastrados";
+                        serviceResponse.Sucess = false;
+                        return serviceResponse;
+                    }
+
+                    client.Login!.PasswordHash = QuickHash(client.Login.PasswordHash).ToLower();
+
+                    _context.Add(client);
                 }
-
-                client.Login!.PasswordHash = QuickHash(client.Login.PasswordHash).ToLower();
-
-                _context.Add(client);
-                await _context.SaveChangesAsync();
                 
-                serviceResponse.Data = client;
+                await _context.SaveChangesAsync();
+                var atualizado = _context.Clients.Where(a => a.Id == client.Id).FirstOrDefault();
+                serviceResponse.Data = atualizado;
                 serviceResponse.Sucess = true;
 
             }

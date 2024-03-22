@@ -24,6 +24,12 @@ namespace LojaTopMoveis.Controllers
         {
             return Ok(await _subcategoryInterface.SearchSubcategories(id));
         }
+
+        [HttpDelete("/subcategorias/{id}")]
+        public async Task<ActionResult<ServiceResponse<Subcategory>>> Remove(Guid id)
+        {
+            return Ok(await _subcategoryInterface.Remove(id));
+        }
     }
     
     

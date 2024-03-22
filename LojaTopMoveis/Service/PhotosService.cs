@@ -41,7 +41,7 @@ namespace LojaTopMoveis.Service
             return _filePath + "\\" + fileName;
         }
 
-        public bool Create(List<Photo> photos)
+        public async Task<bool> Create(List<Photo> photos)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace LojaTopMoveis.Service
                 {
                     var lista = photos.ToList();
                     foreach(var photo in lista) {
-                        var image = _context.Photos.Where(a => a.ID == photo.ID).FirstOrDefault();
+                        var image = await _context.Photos.Where(a => a.ID == photo.ID).FirstOrDefaultAsync();
                         //photo.urlImage = Save(photo.urlImage);
                         photo.ImageBase64 = photo.urlImage;
 
@@ -63,7 +63,7 @@ namespace LojaTopMoveis.Service
                         }
                     }
 
-                    _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                     return true;
 
                 }

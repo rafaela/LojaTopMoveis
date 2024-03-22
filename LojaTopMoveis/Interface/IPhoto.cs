@@ -6,7 +6,7 @@ namespace LojaTopMoveis.Interface
     public interface IPhoto
     {
         string Save(string image);
-        bool Create(List<Photo> photos);
+        Task<bool> Create(List<Photo> photos);
         bool Update(List<Photo> photos);
         Task<ServiceResponse<Photo>> Remove(Guid id);
 

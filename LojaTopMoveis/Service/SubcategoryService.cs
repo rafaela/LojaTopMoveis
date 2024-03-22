@@ -60,32 +60,37 @@ namespace LojaTopMoveis.Service
 
         }
 
-        public bool Remove(Subcategory subcategory)
+        public async Task<ServiceResponse<Subcategory>> Remove(Guid id)
         {
+            ServiceResponse<Subcategory> serviceResponse = new ServiceResponse<Subcategory>();
             try
             {
-                if (subcategory != null)
+                
+                var sub = _context.Subcategories.Where(a => a.Id == id).FirstOrDefault();
+                if (sub != null)
                 {
-                    var sub = _context.Photos.Where(a => a.ID == subcategory.Id).FirstOrDefault();
-                    if (sub == null)
+                    var prods = _context.SubcategoriesProducts.Where(a => a.SubcategoryId == sub.Id).ToList();
+                    if(prods.Count > 0)
                     {
-                        _context.Subcategories.Remove(subcategory);
+                        serviceResponse.Sucess = false;
+                        return serviceResponse;
                     }
-                    else
-                    {
-                        return false;
-                    }
-                    _context.SaveChangesAsync();
-                    return true;
-
+                    _context.Subcategories.Remove(sub);
                 }
+                else
+                {
+                    serviceResponse.Sucess = false;
+                    return serviceResponse;
+                }
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                var message = ex.Message;
-                return false;
+                serviceResponse.Sucess = false;
+                return serviceResponse;
             }
-            return true;
+            serviceResponse.Sucess = true;
+            return serviceResponse;
 
         }
 

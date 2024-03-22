@@ -12,8 +12,8 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    [Migration("20240308174108_producao")]
-    partial class producao
+    [Migration("20240321103840_frete")]
+    partial class frete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -719,8 +719,8 @@ namespace LojaTopMoveis.Migrations
                     b.Property<decimal?>("ValueKm")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("ValuePriceFreeShipping")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("ValuePriceFreeShipping")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

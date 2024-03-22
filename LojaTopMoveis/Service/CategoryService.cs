@@ -69,7 +69,19 @@ namespace LojaTopMoveis.Service
                 else
                 {
                     var subcategories = await _context.Subcategories.Where(a => a.CategoryId == category.Id).ToListAsync();
-                    _context.Subcategories.RemoveRange(subcategories);
+
+                    SubcategoryService subcategoryService = new SubcategoryService(_context);
+                    foreach(var sub in subcategories)
+                    {
+                        var remove = subcategoryService.Remove((Guid)sub.Id);
+                        if (!remove.Result.Sucess)
+                        {
+                            serviceResponse.Message = "Categoria não pode ser removida pois esta sendo utilizada.";
+                            serviceResponse.Sucess = false;
+                            return serviceResponse;
+                        }
+                    }
+                    
                     _context.Categories.Remove(category);
 
                     await _context.SaveChangesAsync();

@@ -62,21 +62,11 @@ namespace LojaTopMoveis.Service
             if(sale != null)
             {
                 modelo.OrderNumber = sale.Name;
-                modelo.Type = "Asset";
+                modelo.Type = "Service";
                 modelo.Name = sale.Name;
                 modelo.Price = (sale.ValorTotal * 100) + "";
                 modelo.ExpirationDate = DateTime.Now.AddDays(1).ToString("yyyy/MM/dd");
-                modelo.SoftDescriptor = "Top Móveis";
                 modelo.MaxNumberOfInstallments = sale.Quantityparcels + "";
-                ModeloPagamentoCompra compra = new ModeloPagamentoCompra();
-                compra.Name = "Entrega própria";
-                compra.Price = 0 + "";
-                compra.Type = "FixedAmount";
-                modelo.Shipping = compra;
-                ModeloPagamentoRecorrente recorrente = new ModeloPagamentoRecorrente();
-                recorrente.endDate = "";
-                recorrente.interval = "";
-                modelo.Recurrent = recorrente;
 
 
             }
