@@ -237,10 +237,6 @@ namespace LojaTopMoveis.Service
                     {
                         sale.PaymentStatus = PaymentStatus.Paid;
                     }
-                    else
-                    {
-                        sale.PaymentStatus = PaymentStatus.Canceled;
-                    }
 
                     await _context.SaveChangesAsync();
                 }
@@ -268,7 +264,7 @@ namespace LojaTopMoveis.Service
             try
             {
                 var query = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).Include(a => a.Address)
-                        .Where(a => a.ClientId == id).AsQueryable();
+                        .Where(a => a.ClientId == id).AsQueryable().OrderByDescending(a => a.DateSale);
 
                 var lista = await query.ToListAsync();
                 List<VendasResponse> vendas = new List<VendasResponse>();
@@ -321,10 +317,6 @@ namespace LojaTopMoveis.Service
                 {
                     if(sale.DeliveryStatus == DeliveryStatus.Pending)
                     {
-                        sale.DeliveryStatus = DeliveryStatus.RequestApproved;
-                    }
-                    else if (sale.DeliveryStatus == DeliveryStatus.RequestApproved)
-                    {
                         sale.DeliveryStatus = DeliveryStatus.SeparateProducts;
                     }
                     else if (sale.DeliveryStatus == DeliveryStatus.SeparateProducts)
@@ -358,11 +350,35 @@ namespace LojaTopMoveis.Service
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<Sale>> ChangeStatusSale(Sale sale)
-        {
-            throw new NotImplementedException();
-        }
 
-     
+        public  async Task<ServiceResponse<VendasResponse>> CancelPayment(Guid id)
+        {
+            ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
+            try
+            {
+                var sale = await _context.Sales.AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
+
+                if (sale != null)
+                {
+                    sale.PaymentStatus = PaymentStatus.Canceled;
+                    sale.DeliveryStatus = DeliveryStatus.Returned;
+
+                    await _context.SaveChangesAsync();
+                }
+
+                VendasResponse venda = new VendasResponse();
+                venda.PaymentStatus = Enumeradores.GetDescription(sale.PaymentStatus);
+                serviceResponse.Sucess = true;
+                serviceResponse.Data = venda;
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
+        }
     }
 }

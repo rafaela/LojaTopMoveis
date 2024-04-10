@@ -59,12 +59,6 @@ namespace LojaTopMoveis.Controllers
             return Ok(await _saleInterface.Delete(id));
         }
 
-        [HttpPost]
-        [Route("/mudastatus/0")]
-        public async Task<ActionResult<ServiceResponse<List<Sale>>>> change(Sale sale)
-        {
-            return Ok(await _saleInterface.ChangeStatusSale(sale));
-        }
 
         [HttpGet]
         [Route("/meuspedidos/{id}")]
@@ -85,6 +79,13 @@ namespace LojaTopMoveis.Controllers
         public async Task<ActionResult<ServiceResponse<List<Sale>>>> ChangeStatusPayment(Guid id)
         {
             return Ok(await _saleInterface.ChangeStatusPayment(id));
+        }
+
+        [HttpGet]
+        [Route("/cancelamento/{id}")]
+        public async Task<ActionResult<ServiceResponse<List<Sale>>>> CancelPayment(Guid id)
+        {
+            return Ok(await _saleInterface.CancelPayment(id));
         }
 
 

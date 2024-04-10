@@ -3,10 +3,12 @@ using LojaTopMoveis.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 using System.Net.Http.Headers;
 using System.Text;
 using Topmoveis.Data;
 using Topmoveis.Model;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace LojaTopMoveis.Service
 {
@@ -71,19 +73,17 @@ namespace LojaTopMoveis.Service
 
             }
 
-            HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
-            var data = JsonConvert.SerializeObject(modelo);
-            httpRequest.Content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencodedl");
-            httpRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Authorization", "Baerer " +  access_token);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(modelo);
+            var data = new System.Net.Http.StringContent(json, Encoding.UTF8, "application/json");
+
+            cliente.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", access_token);
 
 
-            var response = await cliente.SendAsync(httpRequest);
+            var response = await cliente.PostAsync(url, data);
 
-
-            
             string result = response.Content.ReadAsStringAsync().Result;
 
-            if(result != "")
+            if (result != "")
             {
                 serviceResponse.Message = "nadaaa";
             }
