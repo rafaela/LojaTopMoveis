@@ -115,14 +115,36 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(x => x.AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .SetIsOriginAllowed(origin => true) // allow any origin
-                  .AllowCredentials());
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
+        policy.WithOrigins("http://topmoveislamim.com.br", "https://topmoveislamim.com.br", "http://admin.topmoveislamim.com.br", "https://admin.topmoveislamim.com.br").AllowAnyHeader()
+                  .AllowAnyMethod();
+    });
+});
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/echo",
+        context => context.Response.WriteAsync("echo"))
+        .RequireCors(MyAllowSpecificOrigins);
+
+    endpoints.MapControllers()
+             .RequireCors(MyAllowSpecificOrigins);
+
+    endpoints.MapGet("/echo2",
+        context => context.Response.WriteAsync("echo2"));
+
+    endpoints.MapRazorPages();
+});
 
 app.MapControllers();
 
