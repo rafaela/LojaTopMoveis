@@ -108,32 +108,26 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+app.UseCors(builder => builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((host) => true)
+                .AllowCredentials()
+);
+
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
+
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-// app.UseCookiePolicy();
-
-app.UseRouting();
-// app.UseRateLimiter();
-// app.UseRequestLocalization();
-// app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
-// app.UseSession();
-// app.UseResponseCompression();
-// app.UseResponseCaching();
 
-app.MapRazorPages();
-app.MapDefaultControllerRoute();
+app.MapControllers();
 
 app.Run();
