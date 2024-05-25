@@ -115,34 +115,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CompositePolicy", builder =>
-    {
-        builder.WithOrigins("http://admin.topmoveislamim.com.b")
-            .WithMethods("GET", "PUT", "DELETE", "POST")
-            .WithHeaders("Authorization", "Content-Type");
-
-        builder.WithOrigins("http://topmoveislamim.com.b")
-           .WithMethods("GET", "PUT", "DELETE", "POST")
-           .WithHeaders("Authorization", "Content-Type");
-    });
-});
-
+app.UseCors(x => x.AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .SetIsOriginAllowed(origin => true) // allow any origin
+                  .AllowCredentials());
 
 app.UseHttpsRedirection();
 
-
-
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseCors("CompositePolicy");
+app.UseAuthentication();
 app.UseAuthorization();
-
-//app.UseCors(prodCorsPolicy);
 
 app.MapControllers();
 
