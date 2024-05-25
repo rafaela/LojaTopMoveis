@@ -2,6 +2,7 @@
 using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using LojaTopMoveis.Service;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace LojaTopMoveis.Controllers
 
         [HttpPost]
         [Route("login")]
+        [EnableCors("CompositePolicy")]
         public async Task<ServiceResponse<Client>> LoginAsync(User user)
         {
             ServiceResponse<Client> serviceResponse = new ServiceResponse<Client>();
@@ -64,6 +66,7 @@ namespace LojaTopMoveis.Controllers
 
         [HttpPut]
         [Route("atualizasenha")]
+        [EnableCors("CompositePolicy")]
         public Task<ServiceResponse<User>> UpdatePassword(User user)
         {
             ServiceResponse<User> serviceResponse = new ServiceResponse<User>();

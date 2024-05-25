@@ -115,10 +115,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+
+
+
+builder.Services.AddCors(options =>
 {
-    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
-}));
+    options.AddPolicy("CompositePolicy", builder =>
+    {
+        builder.WithOrigins("http://admin.topmoveislamim.com.b")
+            .WithMethods("GET", "PUT", "DELETE", "POST")
+            .WithHeaders("Authorization", "Content-Type");
+
+        builder.WithOrigins("http://topmoveislamim.com.b")
+           .WithMethods("GET", "PUT", "DELETE", "POST")
+           .WithHeaders("Authorization", "Content-Type");
+    });
+});
 
 
 app.UseHttpsRedirection();
@@ -127,7 +139,7 @@ app.UseHttpsRedirection();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("corsapp");
+app.UseCors("CompositePolicy");
 app.UseAuthorization();
 
 //app.UseCors(prodCorsPolicy);
