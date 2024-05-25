@@ -125,10 +125,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-app.UseCors();
+
 
 app.UseHttpsRedirection();
 
+
+
+app.UseRouting();
+app.UseCors("corsapp");
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
@@ -145,6 +149,8 @@ app.UseEndpoints(endpoints =>
 
     endpoints.MapRazorPages();
 });
+
+
 
 app.MapControllers();
 
