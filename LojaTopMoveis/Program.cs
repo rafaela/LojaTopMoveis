@@ -113,8 +113,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://admin.topmoveislamim.com.br/",
-                                              "http://topmoveislamim.com.br/#/login");
+                          policy.WithOrigins("http://admin.topmoveislamim.com.br",
+                                              "http://topmoveislamim.com.br");
                       });
 });
 
