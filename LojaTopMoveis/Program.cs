@@ -106,18 +106,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://admin.topmoveislamim.com.br",
-                                              "http://topmoveislamim.com.br");
-                      });
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -127,11 +115,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors(x => x.AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .SetIsOriginAllowed(origin => true) // allow any origin
+                  .AllowCredentials());
 
-app.UseRouting();
-//UseCors must be placed after "UseRouting", but before "UseAuthorization"
-app.UseCors(MyAllowSpecificOrigins);
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

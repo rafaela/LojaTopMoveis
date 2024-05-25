@@ -12,8 +12,8 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    [Migration("20240321103840_frete")]
-    partial class frete
+    [Migration("20240525195651_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

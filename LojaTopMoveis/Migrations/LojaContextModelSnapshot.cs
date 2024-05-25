@@ -716,6 +716,9 @@ namespace LojaTopMoveis.Migrations
                     b.Property<decimal?>("ValueKm")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal?>("ValuePriceFreeShipping")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Freights");
