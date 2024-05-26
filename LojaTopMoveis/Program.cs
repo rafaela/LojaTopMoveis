@@ -106,16 +106,23 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("ProductionCorsPolicy",
-        policy =>
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder =>
         {
-            policy.WithOrigins("http://localhost:4200", "https://admin.topmoveislamim.com.br", "https://topmoveislamim.com.br")
-                  .WithMethods("GET", "POST", "PUT", "DELETE")
-                  .WithHeaders("content-type", "authorization");
+            builder.WithOrigins("http://localhost",
+                "http://localhost:4200",
+                "https://localhost:7230",
+                "http://localhost:90")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowedToAllowWildcardSubdomains();
         });
 });
+
 
 var app = builder.Build();
 
@@ -126,13 +133,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+/*app.UseCors(x => x.AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .SetIsOriginAllowed(origin => true) // allow any origin
+                  .AllowCredentials());
+*/
+//app.UseHttpsRedirection();
 
-if (app.Environment.IsProduction())
-{
-    // Configura o middleware CORS para usar a política de produção
-    app.UseCors("ProductionCorsPolicy");
-}
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 
