@@ -108,12 +108,12 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
+    options.AddPolicy("ProductionCorsPolicy",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200", "https://admin.topmoveislamim.com.br")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
+            policy.WithOrigins("http://localhost:4200", "https://admin.topmoveislamim.com.br", "https://topmoveislamim.com.br")
+                  .WithMethods("GET", "POST", "PUT", "DELETE")
+                  .WithHeaders("content-type", "authorization");
         });
 });
 
@@ -128,8 +128,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Use CORS
-app.UseCors("AllowSpecificOrigin");
+if (app.Environment.IsProduction())
+{
+    // Configura o middleware CORS para usar a política de produção
+    app.UseCors("ProductionCorsPolicy");
+}
 
 app.UseAuthorization();
 
