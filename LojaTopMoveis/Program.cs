@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Topmoveis.Data;
 using Topmoveis.Model;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,6 +107,15 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddHttpsRedirection(options =>
+    {
+        options.RedirectStatusCode = Status308PermanentRedirect;
+        options.HttpsPort = 443;
+    });
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -115,12 +125,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+
+    app.UseHsts();
+}
+
 app.UseCors(x => x.AllowAnyMethod()
                   .AllowAnyHeader()
                   .SetIsOriginAllowed(origin => true) // allow any origin
                   .AllowCredentials());
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
