@@ -132,13 +132,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseCors(x => x.AllowAnyMethod()
                   .AllowAnyHeader()
                   .SetIsOriginAllowed(origin => true) // allow any origin
                   .AllowCredentials());
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
 
 app.UseAuthorization();
 
