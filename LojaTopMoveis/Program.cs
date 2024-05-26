@@ -106,24 +106,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        builder =>
-        {
-            builder.WithOrigins("http://localhost",
-                "http://localhost:4200",
-                "https://localhost:7230",
-                "http://localhost:90")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .SetIsOriginAllowedToAllowWildcardSubdomains();
-        });
-});
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -133,18 +115,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-/*app.UseCors(x => x.AllowAnyMethod()
+app.UseCors(x => x.AllowAnyMethod()
                   .AllowAnyHeader()
                   .SetIsOriginAllowed(origin => true) // allow any origin
                   .AllowCredentials());
-*/
+
 //app.UseHttpsRedirection();
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-
-app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 
