@@ -121,9 +121,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionCorsPolicy", builder =>
     {
         builder
-            .WithOrigins("https://admin.topmoveislamim.com.br")
-            .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .WithHeaders("content-type", "authorization")
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
             .AllowCredentials();
     });
 });
@@ -140,6 +140,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseRouting();
 app.UseCors("ProductionCorsPolicy");
 
 app.UseAuthorization();
