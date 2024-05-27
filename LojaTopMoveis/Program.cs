@@ -107,26 +107,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-if (!builder.Environment.IsDevelopment())
-{
-    builder.Services.AddHttpsRedirection(options =>
-    {
-        options.RedirectStatusCode = Status308PermanentRedirect;
-        options.HttpsPort = 443;
-    });
-}
 
-/*builder.Services.AddCors(options =>
-{
-    options.AddPolicy("ProductionCorsPolicy", builder =>
-    {
-        builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
-    });
-});*/
+
 
 var app = builder.Build();
 
