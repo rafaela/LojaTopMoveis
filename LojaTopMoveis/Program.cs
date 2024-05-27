@@ -116,7 +116,7 @@ if (!builder.Environment.IsDevelopment())
     });
 }
 
-builder.Services.AddCors(options =>
+/*builder.Services.AddCors(options =>
 {
     options.AddPolicy("ProductionCorsPolicy", builder =>
     {
@@ -126,7 +126,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowCredentials();
     });
-});
+});*/
 
 var app = builder.Build();
 
@@ -141,7 +141,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseCors("ProductionCorsPolicy");
+//app.UseCors("ProductionCorsPolicy");
+app.UseCors(x => x.AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .SetIsOriginAllowed(origin => true) // allow any origin
+                  .AllowCredentials());
 
 app.UseAuthorization();
 
