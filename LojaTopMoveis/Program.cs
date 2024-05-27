@@ -116,6 +116,18 @@ if (!builder.Environment.IsDevelopment())
     });
 }
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ProductionCorsPolicy", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:4200")
+            .WithMethods("GET", "POST", "PUT", "DELETE")
+            .WithHeaders("content-type", "authorization")
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -128,10 +140,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseCors(x => x.AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .SetIsOriginAllowed(origin => true) // allow any origin
-                  .AllowCredentials());
+app.UseCors("ProductionCorsPolicy");
 
 app.UseAuthorization();
 
