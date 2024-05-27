@@ -138,9 +138,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
 //app.UseCors("ProductionCorsPolicy");
 app.UseCors(x => x.AllowAnyMethod()
                   .AllowAnyHeader()
