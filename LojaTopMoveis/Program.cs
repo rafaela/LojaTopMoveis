@@ -122,8 +122,8 @@ builder.Services.AddCors(options =>
     {
         builder
             .WithOrigins("http://localhost:4200")
-            .WithMethods("GET", "POST", "PUT", "DELETE")
-            .WithHeaders("content-type", "authorization")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
             .AllowCredentials();
     });
 });
