@@ -121,7 +121,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionCorsPolicy", builder =>
     {
         builder
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins("https://admin.topmoveislamim.com.br")
             .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .WithHeaders("content-type", "authorization")
             .AllowCredentials();
