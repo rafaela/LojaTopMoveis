@@ -109,34 +109,35 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+// Configuração do pipeline de requisição HTTP
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
+}
+else
+{
+    // Configurações específicas para produção
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
 // Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
 
 app.UseHttpsRedirection();
-//app.UseCors("ProductionCorsPolicy");
-
-
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
-
-app.UseAuthentication();
-
+app.UseRouting();
 app.UseCors(x => x.AllowAnyMethod()
                   .AllowAnyHeader()
                   .SetIsOriginAllowed(origin => true) // allow any origin
