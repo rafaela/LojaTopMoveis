@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
+using System.Linq;
 using Topmoveis.Data;
 using Topmoveis.Enums;
 using Topmoveis.Model;
@@ -43,7 +44,7 @@ namespace LojaTopMoveis.Service
                 _context.Add(sale);
 
                 _context.ProductsSales.AddRange(sale.ProductsSale);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 serviceResponse.Data = sale;
                 serviceResponse.Message = "Venda cadastrada";
@@ -66,12 +67,12 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                Sale? sale = await _context.Sales.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+                Sale? sale = _context.Sales.AsNoTracking().Where(a => a.Id == id).FirstOrDefault();
 
 
                 _context.Sales.Remove(sale);
 
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 serviceResponse.Message = "Categoria removida";
                 serviceResponse.Sucess = true;
 
@@ -89,7 +90,7 @@ namespace LojaTopMoveis.Service
         {
             ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
             try {
-                var l = await _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).Include(a => a.Address).AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
+                var l = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).Include(a => a.Address).AsQueryable().Where(a => a.Id == id).FirstOrDefault();
 
                 VendasResponse vr = new VendasResponse();
                 vr.Id = l.Id;
@@ -101,6 +102,7 @@ namespace LojaTopMoveis.Service
                 vr.DeliveryStatus = Enumeradores.GetDescription(l.DeliveryStatus);
                 vr.ValorTotal = l.ValorTotal;
                 vr.Address = l.Address;
+                vr.Client = l.Client;
 
                 vr.Products = new List<Product>();
                 foreach (var p in l.ProductsSale)
@@ -109,6 +111,13 @@ namespace LojaTopMoveis.Service
                     if (prod != null)
                     {
                         prod.Amount = p.Amount;
+                        if(p.ColorId != null)
+                        {
+                            var color = _context.Colors.Where(a => a.Id == p.ColorId).FirstOrDefault();
+                            prod.Colors.Add(color);
+                        }
+                        
+                       
                     }
                     vr.Products.Add(prod);
                 }
@@ -150,13 +159,13 @@ namespace LojaTopMoveis.Service
 
                 serviceResponse.Total = query.Count();
 
-                query = query.OrderBy(a => a.CreationDate);
+                query = query.OrderByDescending(a => a.CreationDate);
 
                 if (sp.Take > 0)
                 {
                     query = query.Skip(sp.Skip).Take(sp.Take);
                 }
-                var lista = await query.ToListAsync();
+                var lista = query.ToList();
                 List<VendasResponse> vendas = new List<VendasResponse>();
                 foreach (var l in lista)
                 {
@@ -192,7 +201,7 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                Sale? sale1 = await _context.Sales.AsNoTracking().FirstOrDefaultAsync(a => a.Id == sale.Id);
+                Sale? sale1 = _context.Sales.AsNoTracking().Where(a => a.Id == sale.Id).FirstOrDefault();
 
 
 
@@ -205,8 +214,10 @@ namespace LojaTopMoveis.Service
                 else
                 {
                     sale.ChangeDate = DateTime.Now.ToLocalTime();
-                    _context.Sales.Update(sale);
-                    await _context.SaveChangesAsync();
+
+                    sale1 = sale;
+                    _context.Sales.Update(sale1);
+                    _context.SaveChanges();
 
                     serviceResponse.Message = "Categoria atualizada";
                     serviceResponse.Sucess = true;
@@ -229,7 +240,7 @@ namespace LojaTopMoveis.Service
             ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
             try
             {
-                var sale = await _context.Sales.AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
+                var sale = _context.Sales.AsQueryable().Where(a => a.Id == id).FirstOrDefault();
 
                 if (sale != null)
                 {
@@ -238,7 +249,7 @@ namespace LojaTopMoveis.Service
                         sale.PaymentStatus = PaymentStatus.Paid;
                     }
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
 
                 VendasResponse venda = new VendasResponse();
@@ -266,7 +277,7 @@ namespace LojaTopMoveis.Service
                 var query = _context.Sales.Include(a => a.ProductsSale).Include(a => a.Client).Include(a => a.Address)
                         .Where(a => a.ClientId == id).AsQueryable().OrderByDescending(a => a.DateSale);
 
-                var lista = await query.ToListAsync();
+                var lista = query.ToList();
                 List<VendasResponse> vendas = new List<VendasResponse>();
                 foreach (var l in lista) {
                     VendasResponse vr = new VendasResponse();
@@ -356,14 +367,14 @@ namespace LojaTopMoveis.Service
             ServiceResponse<VendasResponse> serviceResponse = new ServiceResponse<VendasResponse>();
             try
             {
-                var sale = await _context.Sales.AsQueryable().Where(a => a.Id == id).FirstOrDefaultAsync();
+                var sale = _context.Sales.AsQueryable().Where(a => a.Id == id).FirstOrDefault();
 
                 if (sale != null)
                 {
                     sale.PaymentStatus = PaymentStatus.Canceled;
                     sale.DeliveryStatus = DeliveryStatus.Returned;
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChangesAsync();
                 }
 
                 VendasResponse venda = new VendasResponse();

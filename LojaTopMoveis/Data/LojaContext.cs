@@ -41,6 +41,7 @@ namespace Topmoveis.Data
         public DbSet<Highlight> Highlights { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<ProductsSale> ProductsSales { get; set; }
+        public DbSet<Color> Colors { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

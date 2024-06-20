@@ -23,7 +23,7 @@ namespace LojaTopMoveis.Service
             try
             {
                 _context.Highlights.Add(highlight);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
 
                 serviceResponse.Data = null;
@@ -58,7 +58,7 @@ namespace LojaTopMoveis.Service
                 {
                     _context.Highlights.Remove(highlight);
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     serviceResponse.Message = "Imagem removida";
                     serviceResponse.Sucess = true;
                 }
@@ -77,7 +77,7 @@ namespace LojaTopMoveis.Service
             ServiceResponse<Highlight> serviceResponse = new ServiceResponse<Highlight>();
             try
             {
-                Highlight? highlight = await _context.Highlights.FirstOrDefaultAsync(a => a.Id == id);
+                Highlight? highlight = _context.Highlights.Where(a => a.Id == id).FirstOrDefault();
 
                 if (highlight == null)
                 {
@@ -126,7 +126,7 @@ namespace LojaTopMoveis.Service
                 {
                     query = query.Skip(sp.Skip).Take(sp.Take);
                 }
-                var lista = await query.ToListAsync();
+                var lista = query.ToList();
                 
                 serviceResponse.Data = lista;
                 
@@ -148,7 +148,7 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                Highlight? highlight1 = await _context.Highlights.AsNoTracking().FirstOrDefaultAsync(a => a.Id == highlight.Id);
+                Highlight? highlight1 = _context.Highlights.AsNoTracking().Where(a => a.Id == highlight.Id).FirstOrDefault();
 
                 
 
@@ -162,7 +162,7 @@ namespace LojaTopMoveis.Service
                 {
                     highlight.ChangeDate = DateTime.Now.ToLocalTime();
                     _context.Highlights.Update(highlight);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     
                     serviceResponse.Message = "Imagem atualizada";
                     serviceResponse.Sucess = true;

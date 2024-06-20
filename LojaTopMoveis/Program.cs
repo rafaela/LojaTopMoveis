@@ -37,6 +37,9 @@ builder.Services.AddScoped<ILoja<Highlight>, HighlightService>();
 builder.Services.AddScoped<ILoja<Payment>, PaymentService>();
 builder.Services.AddScoped<ISale, SaleService>();
 builder.Services.AddScoped<ILinkPagamento, LinkPagamentoService>();
+builder.Services.AddScoped<ILoja<City>, CityService>();
+builder.Services.AddScoped<IColor, ColorService>();
+
 
 
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
@@ -112,22 +115,6 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
-
-// Configuração do pipeline de requisição HTTP
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
-}
-else
-{
-    // Configurações específicas para produção
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
-// Configure the HTTP request pipeline.
 
 if (app.Environment.IsDevelopment())
 {

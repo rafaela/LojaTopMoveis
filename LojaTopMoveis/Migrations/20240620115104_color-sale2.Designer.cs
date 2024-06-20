@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Topmoveis.Data;
 
@@ -11,9 +12,11 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    partial class LojaContextModelSnapshot : ModelSnapshot
+    [Migration("20240620115104_color-sale2")]
+    partial class colorsale2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,6 +171,8 @@ namespace LojaTopMoveis.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ColorId");
 
                     b.HasIndex("SaleId");
 
@@ -857,9 +862,15 @@ namespace LojaTopMoveis.Migrations
 
             modelBuilder.Entity("LojaTopMoveis.Model.ProductsSale", b =>
                 {
+                    b.HasOne("Topmoveis.Model.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorId");
+
                     b.HasOne("Topmoveis.Model.Sale", null)
                         .WithMany("ProductsSale")
                         .HasForeignKey("SaleId");
+
+                    b.Navigation("Color");
                 });
 
             modelBuilder.Entity("LojaTopMoveis.Model.SubcategoriesProduct", b =>

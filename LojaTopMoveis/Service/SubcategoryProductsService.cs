@@ -25,7 +25,8 @@ namespace LojaTopMoveis.Service
                 var subProducts = _context.SubcategoriesProducts.Where(a => a.ProductId == subcategories[0].ProductId).ToList();
                 _context.SubcategoriesProducts.RemoveRange(subProducts);
 
-                
+                //_context.SaveChanges();
+
                 if (subcategories != null && subcategories.Count > 0)
                 {
                      foreach (var sub in subcategories.ToList())
@@ -42,7 +43,7 @@ namespace LojaTopMoveis.Service
                         _context.SubcategoriesProducts.Add(subcategory);
                      }
                 }
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
             }
             catch (Exception ex)

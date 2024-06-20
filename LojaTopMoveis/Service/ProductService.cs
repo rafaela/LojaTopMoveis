@@ -24,8 +24,12 @@ namespace LojaTopMoveis.Service
             {
                 var photosList = product.Photos;
                 product.Photos = null;
+
+                var colorList = product.Colors;
+                product.Colors = null;
+
                 _context.Add(product);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 if (product.SubcategoriesProducts.Count > 0)
                 {
                     SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
@@ -47,10 +51,21 @@ namespace LojaTopMoveis.Service
                 photosList?.ForEach(a => a.ProductId = product.Id);
 
                 var cadastro = await photoService.Create(photosList);
+
+                ColorService colorService = new ColorService(_context);
+                colorList?.ForEach(a => a.ProductId = product.Id);
+
+                var cadastroCor = await colorService.Create(colorList);
                 if (!cadastro)
                 {
                     serviceResponse.Data = null;
                     serviceResponse.Message = "Erro ao cadastrar as imagens dos produtos";
+                    serviceResponse.Sucess = false;
+                }
+                else if (!cadastroCor)
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Erro ao cadastrar as cores dos produtos";
                     serviceResponse.Sucess = false;
                 }
                 else
@@ -78,7 +93,18 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                Product? product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+                Product? product = _context.Products.AsNoTracking().FirstOrDefault(a => a.Id == id);
+
+
+                var vendas = _context.ProductsSales.Where(a => a.ProductId == id).ToList();
+
+                if(vendas.Count > 0)
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Message = "Produto não pode ser removido, tente torná-lo inativo";
+                    serviceResponse.Sucess = false;
+                    return serviceResponse;
+                }
 
                 if (product == null)
                 {
@@ -93,17 +119,25 @@ namespace LojaTopMoveis.Service
                     {
                         _context.SubcategoriesProducts.RemoveRange(subs);
                     }
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
 
                     var photos = _context.Photos.Where(a => a.ProductId == product.Id).ToList();
                     if (photos.Count > 0)
                     {
                         _context.Photos.RemoveRange(photos);
                     }
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
+
+                    var colors = _context.Colors.Where(a => a.ProductId == product.Id).ToList();
+                    if (colors.Count > 0)
+                    {
+                        _context.Colors.RemoveRange(colors);
+                    }
+                    _context.SaveChanges();
+
                     _context.Products.Remove(product);
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     serviceResponse.Message = "Produto removido";
                     serviceResponse.Sucess = true;
                 }
@@ -122,7 +156,8 @@ namespace LojaTopMoveis.Service
             ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
             try
             {
-                Product? product = await _context.Products.Include(a => a.Photos).Include(a => a.Category).Include(a => a.SubcategoriesProducts).FirstOrDefaultAsync(a => a.Id == id);
+                Product? product =  _context.Products.Include(a => a.Photos).Include(a => a.Category).
+                    Include(a => a.SubcategoriesProducts).Include(a => a.Colors).FirstOrDefault(a => a.Id == id);
 
                 if (product == null)
                 {
@@ -149,10 +184,9 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
-                           .Include(a => a.SubcategoriesProducts).AsQueryable();
+                var query = _context.Products.Include(a => a.Category).Include(a => a.Photos).AsQueryable();
 
-                if (sp.Data != null && sp.Data.Name != null)
+                if (sp.Data != null && sp.Data.Name != null && sp.Data.Name != "")
                 {
                     query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
                 }
@@ -177,7 +211,7 @@ namespace LojaTopMoveis.Service
                 {
                     query = query.Skip(sp.Skip).Take(sp.Take);
                 }
-                serviceResponse.Data = await query.ToListAsync();
+                serviceResponse.Data = query.ToList();
             }
             catch (Exception ex)
             {
@@ -192,11 +226,11 @@ namespace LojaTopMoveis.Service
         
         public async Task<ServiceResponse<Product>> Update(Product product)
         {
-                ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
+            ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
 
             try
             {
-                Product? product1 = await _context.Products.AsNoTracking().FirstOrDefaultAsync(a => a.Id == product.Id);
+                Product? product1 =  _context.Products.AsNoTracking().FirstOrDefault(a => a.Id == product.Id);
 
                 if (product1 == null)
                 {
@@ -207,9 +241,11 @@ namespace LojaTopMoveis.Service
                 else
                 {
                     product.ChangeDate = DateTime.Now.ToLocalTime();
-                    _context.Products.Update(product);
 
-                    await _context.SaveChangesAsync();
+                    product1 = product;
+                    _context.Products.Update(product1);
+
+                    _context.SaveChanges();
                     if(product.SubcategoriesProducts.Count > 0)
                     {
                         SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
@@ -229,16 +265,35 @@ namespace LojaTopMoveis.Service
                             serviceResponse.Sucess = true;
                         }
                     }
-                    
+                    else
+                    {
+                        var subProducts = _context.SubcategoriesProducts.Where(a => a.ProductId == product.Id).ToList();
+                        _context.SubcategoriesProducts.RemoveRange(subProducts);
+
+                    }
+
+                    _context.SaveChanges();
+
 
                     PhotosService photoService = new PhotosService(_context);
                     product.Photos?.ForEach(a => a.ProductId = product.Id);
 
                     var cadastro = photoService.Create(product.Photos);
+
+                    ColorService colorService = new ColorService(_context);
+                    product.Colors?.ForEach(a => a.ProductId = product.Id);
+
+                    var cadastroColor = colorService.Create(product.Colors);
                     if (!cadastro.Result)
                     {
                         serviceResponse.Data = null;
-                        serviceResponse.Message = "Erro ao cadastrar/atualizar as imagens dos produtos";
+                        serviceResponse.Message = "Erro ao cadastrar/atualizar as imagens do produto";
+                        serviceResponse.Sucess = false;
+                    }
+                    else if (!cadastroColor.Result)
+                    {
+                        serviceResponse.Data = null;
+                        serviceResponse.Message = "Erro ao cadastrar/atualizar as cores do produto";
                         serviceResponse.Sucess = false;
                     }
                     else
@@ -265,9 +320,10 @@ namespace LojaTopMoveis.Service
             try
             {
                 var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
-                           .Include(a => a.SubcategoriesProducts).Where(a => a.CategoryID == id).AsQueryable();
+                           .Include(a => a.SubcategoriesProducts).Include(a => a.Colors).Where(a => a.CategoryID == id 
+                           && a.Amount > 0 && !a.Inactive).AsQueryable();
 
-                serviceResponse.Data = await query.ToListAsync();
+                serviceResponse.Data = query.ToList();
             }
             catch (Exception ex)
             {
@@ -291,7 +347,7 @@ namespace LojaTopMoveis.Service
                 {
                     var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
                            .Include(a => a.SubcategoriesProducts).Where(a => a.Id == sub.ProductId).AsQueryable();
-                    var itens = await query.ToListAsync();
+                    var itens = query.ToList();
                     if(itens.Count > 0)
                     {
                         serviceResponse.Data.AddRange(itens);
@@ -319,7 +375,7 @@ namespace LojaTopMoveis.Service
                 var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
                            .Include(a => a.SubcategoriesProducts).Where(a => a.FeaturedProduct).AsQueryable();
 
-                serviceResponse.Data = await query.ToListAsync();
+                serviceResponse.Data = query.ToList();
             }
             catch (Exception ex)
             {
