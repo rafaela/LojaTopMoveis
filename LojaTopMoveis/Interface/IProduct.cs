@@ -6,6 +6,7 @@ namespace LojaTopMoveis.Interface
     public interface IProduct
     {
         Task<ServiceResponse<List<Product>>> Get(ServiceParameter<Product> sp);
+        Task<ServiceResponse<List<Product>>> GetProductsAdmin(ServiceParameter<Product> sp);
         Task<ServiceResponse<Product>> Create(Product product);
         Task<ServiceResponse<Product>> GetByID(Guid id);
         Task<ServiceResponse<Product>> Update(Product product);

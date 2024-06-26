@@ -223,7 +223,52 @@ namespace LojaTopMoveis.Service
 
         }
 
-        
+        public async Task<ServiceResponse<List<Product>>> GetProductsAdmin(ServiceParameter<Product> sp)
+        {
+            ServiceResponse<List<Product>> serviceResponse = new ServiceResponse<List<Product>>();
+
+            try
+            {
+                var query = _context.Products.Include(a => a.Category).AsQueryable();
+
+                if (sp.Data != null && sp.Data.Name != null && sp.Data.Name != "")
+                {
+                    query = query.Where(a => a.Name != null && a.Name.Contains(sp.Data.Name));
+                }
+                if (sp.Data != null && sp.Data.Inactive == true)
+                {
+                    query = query.Where(a => a.Inactive);
+                }
+                else
+                {
+                    query = query.Where(a => !a.Inactive);
+                }
+                if (sp.Data != null && sp.Data.FeaturedProduct == true)
+                {
+                    query = query.Where(a => a.FeaturedProduct);
+                }
+
+                serviceResponse.Total = query.Count();
+
+                query = query.OrderBy(a => a.Name);
+
+                if (sp.Take > 0)
+                {
+                    query = query.Skip(sp.Skip).Take(sp.Take);
+                }
+                serviceResponse.Data = query.ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Sucess = false;
+            }
+
+            return serviceResponse;
+
+        }
+
+
         public async Task<ServiceResponse<Product>> Update(Product product)
         {
             ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();

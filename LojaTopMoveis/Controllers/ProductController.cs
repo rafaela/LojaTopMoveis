@@ -26,6 +26,13 @@ namespace LojaTopMoveis.Controllers
         }
 
         [HttpPost]
+        [Route("/produtosadmin")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProductsAdmin(ServiceParameter<Product> sp)
+        {
+            return Ok(await _productInterface.GetProductsAdmin(sp));
+        }
+
+        [HttpPost]
         [Route("/produtos/0")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> CreateProducts(Product product)
         {

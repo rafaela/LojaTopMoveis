@@ -12,8 +12,8 @@ using Topmoveis.Data;
 namespace LojaTopMoveis.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    [Migration("20240618165640_colors")]
-    partial class colors
+    [Migration("20240525195651_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -655,31 +655,6 @@ namespace LojaTopMoveis.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("Topmoveis.Model.Color", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ChangeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("Colors");
-                });
-
             modelBuilder.Entity("Topmoveis.Model.Employee", b =>
                 {
                     b.Property<Guid>("Id")
@@ -977,13 +952,6 @@ namespace LojaTopMoveis.Migrations
                     b.Navigation("Login");
                 });
 
-            modelBuilder.Entity("Topmoveis.Model.Color", b =>
-                {
-                    b.HasOne("Topmoveis.Model.Product", null)
-                        .WithMany("Colors")
-                        .HasForeignKey("ProductId");
-                });
-
             modelBuilder.Entity("Topmoveis.Model.Employee", b =>
                 {
                     b.HasOne("LojaTopMoveis.Model.User", "Login")
@@ -1042,8 +1010,6 @@ namespace LojaTopMoveis.Migrations
 
             modelBuilder.Entity("Topmoveis.Model.Product", b =>
                 {
-                    b.Navigation("Colors");
-
                     b.Navigation("Photos");
 
                     b.Navigation("SubcategoriesProducts");

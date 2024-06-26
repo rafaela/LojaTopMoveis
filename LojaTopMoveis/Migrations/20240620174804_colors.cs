@@ -11,6 +11,12 @@ namespace LojaTopMoveis.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<Guid>(
+                name: "ColorId",
+                table: "ProductsSales",
+                type: "uniqueidentifier",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "Colors",
                 columns: table => new
@@ -42,6 +48,10 @@ namespace LojaTopMoveis.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Colors");
+
+            migrationBuilder.DropColumn(
+                name: "ColorId",
+                table: "ProductsSales");
         }
     }
 }

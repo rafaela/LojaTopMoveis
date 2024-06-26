@@ -31,9 +31,13 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                if(client.Id != Guid.Empty || client.Id != null)
+                if(client.Id != Guid.Empty)
                 {
                     _context.Update(client);
+                    var atualizado = _context.Clients.Where(a => a.Id == client.Id).FirstOrDefault();
+                    serviceResponse.Data = atualizado;
+
+                    await _context.SaveChangesAsync();
                 }
                 else
                 {
@@ -48,11 +52,13 @@ namespace LojaTopMoveis.Service
                     client.Login!.PasswordHash = QuickHash(client.Login.PasswordHash).ToLower();
 
                     _context.Add(client);
+                    serviceResponse.Data = client;
+
+                    await _context.SaveChangesAsync();
                 }
                 
-                await _context.SaveChangesAsync();
-                var atualizado = _context.Clients.Where(a => a.Id == client.Id).FirstOrDefault();
-                serviceResponse.Data = atualizado;
+                
+               
                 serviceResponse.Sucess = true;
 
             }
