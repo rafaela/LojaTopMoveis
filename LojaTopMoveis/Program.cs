@@ -45,6 +45,18 @@ builder.Services.AddScoped<IColor, ColorService>();
 builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
     .GetConnectionString("ServerConnection")));
 
+/*builder.Services.AddDbContext<LojaContext>(options => 
+
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection"),
+
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
+        }
+    
+    
+    ));*/
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;

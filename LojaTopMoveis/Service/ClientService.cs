@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Topmoveis.Data;
 using Topmoveis.Model;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LojaTopMoveis.Service
 {
@@ -86,7 +87,7 @@ namespace LojaTopMoveis.Service
                 if (client == null)
                 {
                     serviceResponse.Data = null;
-                    serviceResponse.Message = "Categoria não encontrada";
+                    serviceResponse.Message = "Cliente não encontrada";
                     serviceResponse.Sucess = false;
 
                     return serviceResponse;
@@ -111,7 +112,22 @@ namespace LojaTopMoveis.Service
 
             try
             {
-                serviceResponse.Data = await _context.Clients.ToListAsync();
+                var query =  _context.Clients.AsQueryable();
+                if (sp.Data != null && sp.Data.Name != null)
+                {
+                    query = query.Where(a =>  a.Name.Contains(sp.Data.Name));
+                }
+                serviceResponse.Total = query.Count();
+
+                query = query.OrderBy(a => a.Name);
+
+                if (sp.Take > 0)
+                {
+                    query = query.Skip(sp.Skip).Take(sp.Take);
+                }
+
+                serviceResponse.Data = await query.ToListAsync();
+
             }
             catch (Exception ex)
             {

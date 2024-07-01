@@ -40,6 +40,8 @@ namespace LojaTopMoveis.Service
                 {
                     var prod = _context.Products.Where(a => a.Id == p.ProductId).FirstOrDefault();
                     prod.Amount -= p.Amount;
+                    var color = _context.Colors.Where(a => a.Id == p.ColorId).FirstOrDefault();
+                    color.Amount -= p.Amount;
                 }
                 _context.Add(sale);
 

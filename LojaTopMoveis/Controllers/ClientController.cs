@@ -18,7 +18,7 @@ namespace LojaTopMoveis.Controllers
             _clientInterface = categoryInterface;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/clientes")]
         public async Task<ActionResult<ServiceResponse<Client>>> Get(ServiceParameter<Client> sp)
         {
