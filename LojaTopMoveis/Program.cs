@@ -42,10 +42,10 @@ builder.Services.AddScoped<IColor, ColorService>();
 
 
 
-builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
-    .GetConnectionString("ServerConnection")));
+/*builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(builder.Configuration
+    .GetConnectionString("ServerConnection")));*/
 
-/*builder.Services.AddDbContext<LojaContext>(options => 
+builder.Services.AddDbContext<LojaContext>(options => 
 
     options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection"),
 
@@ -55,7 +55,7 @@ builder.Services.AddDbContext<LojaContext>(options => options.UseSqlServer(build
         }
     
     
-    ));*/
+  ));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
