@@ -366,7 +366,7 @@ namespace LojaTopMoveis.Service
             {
                 var query = _context.Products.Include(a => a.Category).Include(a => a.Photos)
                            .Include(a => a.SubcategoriesProducts).Include(a => a.Colors).Where(a => a.CategoryID == id 
-                           && a.Amount > 0 && !a.Inactive).AsQueryable();
+                            && !a.Inactive).AsQueryable();
 
                 serviceResponse.Data = query.ToList();
             }
