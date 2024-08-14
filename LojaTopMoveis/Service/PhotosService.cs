@@ -17,7 +17,7 @@ namespace LojaTopMoveis.Service
             _context = context;
             //_filePath = "C:\\Users\\ACER\\Pictures\\topmoveis";
 
-            _filePath = "wwwroot\\images";
+            _filePath = "wwwroot/images";
         }
         
         //lidando com base64
@@ -31,14 +31,14 @@ namespace LojaTopMoveis.Service
 
             var fileName = Guid.NewGuid().ToString() + "." + fileExt;
 
-            using(var imageFile = new FileStream(_filePath + "\\" + fileName, FileMode.Create))
+            using(var imageFile = new FileStream(_filePath + "/" + fileName, FileMode.Create))
             {
                 imageFile.Write(imgbytes, 0, imgbytes.Length);
                 imageFile.Flush();
 
             }
 
-            return _filePath + "\\" + fileName;
+            return _filePath + "/" + fileName;
         }
 
         public async Task<bool> Create(List<Photo> photos)

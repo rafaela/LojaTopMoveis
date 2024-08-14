@@ -15,7 +15,7 @@ namespace LojaTopMoveis.Service
         public HighlightService(LojaContext context)
         {
             _context = context;
-            _filePath = "wwwroot\\images";
+            _filePath = "wwwroot/images";
         }
 
         public string Save(string image)
@@ -28,14 +28,14 @@ namespace LojaTopMoveis.Service
 
             var fileName = Guid.NewGuid().ToString() + "." + fileExt;
 
-            using (var imageFile = new FileStream(_filePath + "\\" + fileName, FileMode.Create))
+            using (var imageFile = new FileStream(_filePath + "/" + fileName, FileMode.Create))
             {
                 imageFile.Write(imgbytes, 0, imgbytes.Length);
                 imageFile.Flush();
 
             }
 
-            return _filePath + "\\" + fileName;
+            return _filePath + "/" + fileName;
         }
 
         public async Task<ServiceResponse<Highlight>> Create(Highlight highlight)
