@@ -10,14 +10,34 @@ namespace LojaTopMoveis.Service
     public class ColorService : IColor
     {
         private readonly LojaContext _context;
+        private readonly string _filePath;
 
         public ColorService(LojaContext context)
         {
             _context = context;
-          
+            _filePath = "wwwroot\\images";
+
         }
 
-        
+        public string Save(string image)
+        {
+            var fileExt = image.Substring(image.IndexOf("/") + 1, image.IndexOf(";") - image.IndexOf("/") - 1); //png jpg
+
+            var base64Code = image.Substring(image.IndexOf(",") + 1);
+
+            var imgbytes = Convert.FromBase64String(base64Code);
+
+            var fileName = Guid.NewGuid().ToString() + "." + fileExt;
+
+            using (var imageFile = new FileStream(_filePath + "\\" + fileName, FileMode.Create))
+            {
+                imageFile.Write(imgbytes, 0, imgbytes.Length);
+                imageFile.Flush();
+
+            }
+
+            return _filePath + "\\" + fileName;
+        }
 
         public async Task<bool> Create(List<Color> colors)
         {
@@ -28,6 +48,7 @@ namespace LojaTopMoveis.Service
                     var lista = colors.ToList();
                     foreach(var cor in lista) {
                         var image = _context.Colors.Where(a => a.Id == cor.Id).FirstOrDefault();
+                        cor.ImageBase64 = Save(cor.urlImage);
 
                         if (image == null)
                         {
