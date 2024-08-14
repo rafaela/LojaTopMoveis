@@ -28,12 +28,17 @@ namespace LojaTopMoveis.Service
                 var colorList = product.Colors;
                 product.Colors = null;
 
+                var categories = product.SubcategoriesProducts;
+                product.SubcategoriesProducts = null;
+
+                categories?.ForEach(a => a.ProductId = product.Id);
+
                 _context.Add(product);
                 _context.SaveChanges();
-                if (product.SubcategoriesProducts.Count > 0)
+                if (categories.Count > 0)
                 {
                     SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
-                    var cad = await subcategoryService.Create(product.SubcategoriesProducts);
+                    var cad = await subcategoryService.Create(categories);
                     if (!cad)
                     {
                         serviceResponse.Data = null;
@@ -285,12 +290,7 @@ namespace LojaTopMoveis.Service
                 }
                 else
                 {
-                    product.ChangeDate = DateTime.Now.ToLocalTime();
-
-                    product1 = product;
-                    _context.Products.Update(product1);
-
-                    _context.SaveChanges();
+                    
                     if(product.SubcategoriesProducts.Count > 0)
                     {
                         SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
@@ -329,6 +329,17 @@ namespace LojaTopMoveis.Service
                     product.Colors?.ForEach(a => a.ProductId = product.Id);
 
                     var cadastroColor = colorService.Create(product.Colors);
+
+                    product.ChangeDate = DateTime.Now.ToLocalTime();
+
+                    product1 = product;
+
+                    product1.Photos = null;
+                    product1.Colors = null;
+                    _context.Products.Update(product1);
+
+                    _context.SaveChanges();
+
                     if (!cadastro.Result)
                     {
                         serviceResponse.Data = null;

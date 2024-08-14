@@ -17,7 +17,7 @@ namespace LojaTopMoveis.Service
             _context = context;
             //_filePath = "C:\\Users\\ACER\\Pictures\\topmoveis";
 
-            _filePath = "C:\\Users\\ACER\\Documents\\LojaTopMoveis-Front\\loja_admin\\loja-web\\src\\assets\\images";
+            _filePath = "wwwroot\\images";
         }
         
         //lidando com base64
@@ -51,7 +51,7 @@ namespace LojaTopMoveis.Service
                     foreach(var photo in lista) {
                         var image = _context.Photos.Where(a => a.ID == photo.ID).FirstOrDefault();
                         //photo.urlImage = Save(photo.urlImage);
-                        photo.ImageBase64 = photo.urlImage;
+                        photo.ImageBase64 = Save(photo.urlImage);
 
                         if (image == null)
                         {
