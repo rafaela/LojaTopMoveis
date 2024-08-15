@@ -51,7 +51,7 @@ namespace LojaTopMoveis.Service
                     foreach(var photo in lista) {
                         var image = _context.Photos.Where(a => a.ID == photo.ID).FirstOrDefault();
                         //photo.urlImage = Save(photo.urlImage);
-                        photo.ImageBase64 = Save(photo.urlImage);
+                        photo.ImageBase64 = photo.urlImage;
 
                         if (image == null)
                         {

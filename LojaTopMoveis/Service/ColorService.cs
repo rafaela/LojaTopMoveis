@@ -48,7 +48,7 @@ namespace LojaTopMoveis.Service
                     var lista = colors.ToList();
                     foreach(var cor in lista) {
                         var image = _context.Colors.Where(a => a.Id == cor.Id).FirstOrDefault();
-                        cor.ImageBase64 = Save(cor.urlImage);
+                        cor.ImageBase64 = cor.urlImage;
 
                         if (image == null)
                         {

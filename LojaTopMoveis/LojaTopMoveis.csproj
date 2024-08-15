@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Auth\**" />
+    <Compile Remove="wwwroot\**" />
     <Content Remove="Auth\**" />
+    <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="Auth\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="Auth\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,10 +52,6 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>
