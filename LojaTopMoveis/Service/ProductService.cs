@@ -28,13 +28,16 @@ namespace LojaTopMoveis.Service
                 var colorList = product.Colors;
                 product.Colors = null;
 
+                
+
+                _context.Add(product);
+                await _context.SaveChangesAsync();
+
+
                 var categories = product.SubcategoriesProducts;
                 product.SubcategoriesProducts = null;
 
                 categories?.ForEach(a => a.ProductId = product.Id);
-
-                _context.Add(product);
-                _context.SaveChanges();
                 if (categories.Count > 0)
                 {
                     SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
@@ -63,12 +66,16 @@ namespace LojaTopMoveis.Service
                 var cadastroCor = await colorService.Create(colorList);
                 if (!cadastro)
                 {
+                    _ = Delete(product.Id);
+                    
                     serviceResponse.Data = null;
                     serviceResponse.Message = "Erro ao cadastrar as imagens dos produtos";
                     serviceResponse.Sucess = false;
                 }
                 else if (!cadastroCor)
                 {
+
+                    _ = Delete(product.Id);
                     serviceResponse.Data = null;
                     serviceResponse.Message = "Erro ao cadastrar as cores dos produtos";
                     serviceResponse.Sucess = false;

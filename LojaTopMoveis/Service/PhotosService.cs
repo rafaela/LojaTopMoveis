@@ -2,6 +2,7 @@
 using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
@@ -51,21 +52,26 @@ namespace LojaTopMoveis.Service
                     foreach(var photo in lista) {
                         var image = _context.Photos.Where(a => a.ID == photo.ID).FirstOrDefault();
                         //photo.urlImage = Save(photo.urlImage);
-                        photo.ImageBase64 = photo.urlImage;
+                        photo.ImageBase64 = StringToBase4(photo.urlImage);
 
-                        if (image == null)
+                        if(photo.ImageBase64.Length <= 2147483647)
                         {
-                            _context.Photos.Add(photo);
+                            if (image == null)
+                            {
+                                _context.Photos.Add(photo);
+                            }
+                            else
+                            {
+                                image = photo;
+                            }
+                            _context.SaveChanges();
+                            return true;
                         }
                         else
                         {
-                            image = photo;
+                            return false;
                         }
                     }
-
-                    _context.SaveChanges();
-                    return true;
-
                 }
             }
             catch (Exception ex)
@@ -76,6 +82,35 @@ namespace LojaTopMoveis.Service
             return true;
 
         }
+
+        public static string StringToBase4(string input)
+        {
+            // Inicializa o StringBuilder para armazenar a string Base4
+            StringBuilder base4String = new StringBuilder();
+
+            // Converte cada caractere da string para seu valor binário
+            foreach (char c in input)
+            {
+                // Converte o caractere para seu valor binário e adiciona zeros à esquerda para ter 8 bits
+                string binary = Convert.ToString(c, 2).PadLeft(8, '0');
+
+                // Divide a string binária em grupos de 2 bits
+                for (int i = 0; i < binary.Length; i += 2)
+                {
+                    // Pega o grupo de 2 bits
+                    string twoBits = binary.Substring(i, 2);
+
+                    // Converte os 2 bits para um número de 0 a 3 (Base4)
+                    int base4Digit = Convert.ToInt32(twoBits, 2);
+
+                    // Adiciona o número Base4 à string de saída
+                    base4String.Append(base4Digit);
+                }
+            }
+
+            return base4String.ToString();
+        }
+
 
         public bool Update(List<Photo> photos)
         {
