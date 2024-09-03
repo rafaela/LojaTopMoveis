@@ -3,6 +3,7 @@ using LojaTopMoveis.Model;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Entity;
+using System.Linq;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
@@ -21,26 +22,42 @@ namespace LojaTopMoveis.Service
         {
             try
             {
-                //remove todas as subcategorias de do produto
-                var subProducts = _context.SubcategoriesProducts.Where(a => a.ProductId == subcategories[0].ProductId).ToList();
-                _context.SubcategoriesProducts.RemoveRange(subProducts);
-
-                //_context.SaveChanges();
+                
 
                 if (subcategories != null && subcategories.Count > 0)
                 {
                      foreach (var sub in subcategories.ToList())
                      {
-                        SubcategoriesProduct subcategory = new SubcategoriesProduct();
-                        subcategory.SubcategoryId = sub.SubcategoryId;
-                        var searchsub = _context.Subcategories.Where(a => a.Id == sub.SubcategoryId).FirstOrDefault();
-                        subcategory.ProductId = sub.ProductId;
 
-                        if(searchsub != null)
+                        
+                        if (sub.Id == null)
                         {
-                            subcategory.Name = searchsub.Name;
+                            SubcategoriesProduct subcategory = new SubcategoriesProduct();
+                            subcategory.SubcategoryId = sub.SubcategoryId;
+                            var searchsub = _context.Subcategories.Where(a => a.Id == sub.SubcategoryId).FirstOrDefault();
+                            subcategory.ProductId = sub.ProductId;
+
+                            if (searchsub != null)
+                            {
+                                subcategory.Name = searchsub.Name;
+                            }
+
+                            _context.SubcategoriesProducts.Add(subcategory);
                         }
-                        _context.SubcategoriesProducts.Add(subcategory);
+                        else{
+                            var subcategory =  _context.SubcategoriesProducts.FirstOrDefault(a => a.Id == sub.Id);
+
+                            subcategory.SubcategoryId = sub.SubcategoryId;
+                            var searchsub = _context.Subcategories.Where(a => a.Id == sub.SubcategoryId).FirstOrDefault();
+                            subcategory.ProductId = sub.ProductId;
+
+                            if (searchsub != null)
+                            {
+                                subcategory.Name = searchsub.Name;
+                            }
+                            _context.SubcategoriesProducts.Update(subcategory);
+                        }
+                        
                      }
                 }
                 _context.SaveChanges();
@@ -48,7 +65,7 @@ namespace LojaTopMoveis.Service
             }
             catch (Exception ex)
             {
-                var message = ex.Message;
+                ///var message = ex.Message;
                 return false;
             }
             return true;

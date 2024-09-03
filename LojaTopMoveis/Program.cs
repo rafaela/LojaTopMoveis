@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 using System.Text.Json.Serialization;
 using Topmoveis.Data;
@@ -53,9 +54,13 @@ builder.Services.AddDbContext<LojaContext>(options =>
         {
             sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
         }
-    
-    
-  ));
+));
+
+builder.Services.AddDbContext<LojaContext>(options =>
+{
+   // options.UseSqlServer("ServerConnection");
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

@@ -2,6 +2,7 @@
 using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
@@ -28,18 +29,18 @@ namespace LojaTopMoveis.Service
                 var colorList = product.Colors;
                 product.Colors = null;
 
-                
+                var categories = product.SubcategoriesProducts;
+                product.SubcategoriesProducts = null;
 
                 _context.Add(product);
                 await _context.SaveChangesAsync();
 
 
-                var categories = product.SubcategoriesProducts;
-                product.SubcategoriesProducts = null;
-
-                categories?.ForEach(a => a.ProductId = product.Id);
+                
                 if (categories.Count > 0)
                 {
+                    categories[0].ProductId = product.Id;
+                
                     SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
                     var cad = await subcategoryService.Create(categories);
                     if (!cad)
@@ -170,6 +171,17 @@ namespace LojaTopMoveis.Service
             {
                 Product? product =  _context.Products.Include(a => a.Photos).Include(a => a.Category).
                     Include(a => a.SubcategoriesProducts).Include(a => a.Colors).FirstOrDefault(a => a.Id == id);
+
+                foreach(var p in product.Photos){
+                    if (p.Imagem != null)
+                        p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                }
+
+                foreach (var p in product.Colors)
+                {
+                    if (p.Imagem != null)
+                        p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                }
 
                 if (product == null)
                 {
@@ -369,8 +381,8 @@ namespace LojaTopMoveis.Service
             }
             catch (Exception ex)
             {
-                serviceResponse.Message = ex.Message;
-                serviceResponse.Sucess = false;
+                //serviceResponse.Message = ex.Message;
+                //serviceResponse.Sucess = false;
             }
 
             return serviceResponse;
@@ -387,6 +399,22 @@ namespace LojaTopMoveis.Service
                             && !a.Inactive).AsQueryable();
 
                 serviceResponse.Data = query.ToList();
+
+                foreach (var data in serviceResponse.Data)
+                {
+                    foreach(var p in data.Photos)
+                    {
+                        if(p.Imagem != null)
+                            p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                    }
+
+                    foreach (var p in data.Colors)
+                    {
+                        if (p.Imagem != null)
+                            p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                    }
+
+                }
             }
             catch (Exception ex)
             {

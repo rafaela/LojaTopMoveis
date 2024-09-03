@@ -2,6 +2,7 @@
 using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
@@ -18,32 +19,16 @@ namespace LojaTopMoveis.Service
             _filePath = "wwwroot/images";
         }
 
-        public string Save(string image)
-        {
-            var fileExt = image.Substring(image.IndexOf("/") + 1, image.IndexOf(";") - image.IndexOf("/") - 1); //png jpg
-
-            var base64Code = image.Substring(image.IndexOf(",") + 1);
-
-            var imgbytes = Convert.FromBase64String(base64Code);
-
-            var fileName = Guid.NewGuid().ToString() + "." + fileExt;
-
-            using (var imageFile = new FileStream(_filePath + "/" + fileName, FileMode.Create))
-            {
-                imageFile.Write(imgbytes, 0, imgbytes.Length);
-                imageFile.Flush();
-
-            }
-
-            return _filePath + "/" + fileName;
-        }
-
+        
         public async Task<ServiceResponse<Highlight>> Create(Highlight highlight)
         {
             ServiceResponse<Highlight> serviceResponse = new ServiceResponse<Highlight>();
 
             try
             {
+                var bytes = Encoding.UTF8.GetBytes(highlight.Image);
+                highlight.Image = null;
+                highlight.Imagem = bytes;
                 _context.Highlights.Add(highlight);
                 _context.SaveChanges();
 
@@ -101,6 +86,10 @@ namespace LojaTopMoveis.Service
             {
                 Highlight? highlight = _context.Highlights.Where(a => a.Id == id).FirstOrDefault();
 
+                if (highlight.Imagem != null)
+                    highlight.Image = Encoding.UTF8.GetString(highlight.Imagem);
+                
+
                 if (highlight == null)
                 {
                     serviceResponse.Data = null;
@@ -151,7 +140,13 @@ namespace LojaTopMoveis.Service
                 var lista = query.ToList();
                 
                 serviceResponse.Data = lista;
-                
+                foreach (var p in serviceResponse.Data)
+                {
+                    if (p.Imagem != null)
+                        p.Image = Encoding.UTF8.GetString(p.Imagem);
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -170,6 +165,10 @@ namespace LojaTopMoveis.Service
 
             try
             {
+                var bytes = Encoding.UTF8.GetBytes(highlight.Image);
+                highlight.Image = null;
+                highlight.Imagem = bytes;
+
                 Highlight? highlight1 = _context.Highlights.AsNoTracking().Where(a => a.Id == highlight.Id).FirstOrDefault();
 
                 

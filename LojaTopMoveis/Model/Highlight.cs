@@ -8,5 +8,6 @@
         public bool? Inactive { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
         public DateTime ChangeDate { get; set; } = DateTime.Now.ToLocalTime();
+        public byte[]? Imagem { get; set; }
     }
 }

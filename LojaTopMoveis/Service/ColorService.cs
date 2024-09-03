@@ -2,6 +2,7 @@
 using LojaTopMoveis.Interface;
 using LojaTopMoveis.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using Topmoveis.Data;
 using Topmoveis.Model;
 
@@ -19,25 +20,6 @@ namespace LojaTopMoveis.Service
 
         }
 
-        public string Save(string image)
-        {
-            var fileExt = image.Substring(image.IndexOf("/") + 1, image.IndexOf(";") - image.IndexOf("/") - 1); //png jpg
-
-            var base64Code = image.Substring(image.IndexOf(",") + 1);
-
-            var imgbytes = Convert.FromBase64String(base64Code);
-
-            var fileName = Guid.NewGuid().ToString() + "." + fileExt;
-
-            using (var imageFile = new FileStream(_filePath + "/" + fileName, FileMode.Create))
-            {
-                imageFile.Write(imgbytes, 0, imgbytes.Length);
-                imageFile.Flush();
-
-            }
-
-            return _filePath + "/" + fileName;
-        }
 
         public async Task<bool> Create(List<Color> colors)
         {
@@ -48,7 +30,9 @@ namespace LojaTopMoveis.Service
                     var lista = colors.ToList();
                     foreach(var cor in lista) {
                         var image = _context.Colors.Where(a => a.Id == cor.Id).FirstOrDefault();
-                        cor.ImageBase64 = cor.urlImage;
+                        var bytes = Encoding.UTF8.GetBytes(cor.urlImage);
+                        cor.urlImage = null;
+                        cor.Imagem = bytes;
 
                         if (image == null)
                         {
@@ -60,7 +44,7 @@ namespace LojaTopMoveis.Service
                         }
                     }
 
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                     return true;
 
                 }
