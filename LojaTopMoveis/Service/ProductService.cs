@@ -309,35 +309,31 @@ namespace LojaTopMoveis.Service
                 }
                 else
                 {
-                    
-                    if(product.SubcategoriesProducts.Count > 0)
-                    {
-                        SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
-                        var cad = subcategoryService.Create(product.SubcategoriesProducts);
+                    var categories = product.SubcategoriesProducts;
+                    product.SubcategoriesProducts = null;
 
-                        if (!cad.Result)
+                    if (categories.Count > 0)
+                    {
+                        categories[0].ProductId = product.Id;
+
+                        SubcategoryProductsService subcategoryService = new SubcategoryProductsService(_context);
+                        var cad = await subcategoryService.Create(categories);
+                        if (!cad)
                         {
                             serviceResponse.Data = null;
-                            serviceResponse.Message = "Erro ao cadastrar/atualizar subcategoria do produto";
+                            serviceResponse.Message = "Erro ao cadastrar as subcategorias";
                             serviceResponse.Sucess = false;
-
                         }
                         else
                         {
                             serviceResponse.Data = null;
-                            serviceResponse.Message = "Produto atualizado";
+                            serviceResponse.Message = "Produto cadastrado";
                             serviceResponse.Sucess = true;
                         }
-                    }
-                    else
-                    {
-                        var subProducts = _context.SubcategoriesProducts.Where(a => a.ProductId == product.Id).ToList();
-                        _context.SubcategoriesProducts.RemoveRange(subProducts);
+
+                        _context.SaveChanges();
 
                     }
-
-                    _context.SaveChanges();
-
 
                     PhotosService photoService = new PhotosService(_context);
                     product.Photos?.ForEach(a => a.ProductId = product.Id);
