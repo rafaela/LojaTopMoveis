@@ -172,16 +172,26 @@ namespace LojaTopMoveis.Service
                 Product? product =  _context.Products.Include(a => a.Photos).Include(a => a.Category).
                     Include(a => a.SubcategoriesProducts).Include(a => a.Colors).FirstOrDefault(a => a.Id == id);
 
-                foreach(var p in product.Photos){
-                    if (p.Imagem != null)
-                        p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                if(product.Photos != null)
+                {
+                    foreach (var p in product.Photos)
+                    {
+                        if (p.Imagem != null)
+                            p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                    }
                 }
 
-                foreach (var p in product.Colors)
+                if(product.Colors != null)
                 {
-                    if (p.Imagem != null)
-                        p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                    foreach (var p in product.Colors)
+                    {
+                        if (p.Imagem != null)
+                            p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                    }
                 }
+                
+
+                
 
                 if (product == null)
                 {
@@ -396,18 +406,24 @@ namespace LojaTopMoveis.Service
 
                 serviceResponse.Data = query.ToList();
 
-                foreach (var data in serviceResponse.Data)
+                foreach (var item in serviceResponse.Data)
                 {
-                    foreach(var p in data.Photos)
+                    if (item.Photos != null)
                     {
-                        if(p.Imagem != null)
-                            p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                        foreach (var p in item.Photos)
+                        {
+                            if (p.Imagem != null)
+                                p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                        }
                     }
 
-                    foreach (var p in data.Colors)
+                    if (item.Colors != null)
                     {
-                        if (p.Imagem != null)
-                            p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                        foreach (var p in item.Colors)
+                        {
+                            if (p.Imagem != null)
+                                p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                        }
                     }
 
                 }
@@ -437,12 +453,36 @@ namespace LojaTopMoveis.Service
                     var itens = query.ToList();
                     if(itens.Count > 0)
                     {
+
+                        
+
                         serviceResponse.Data.AddRange(itens);
                     }
                         
                 }
 
-                
+
+                foreach (var item in serviceResponse.Data)
+                {
+                    if(item.Photos != null)
+                    {
+                        foreach (var p in item.Photos)
+                        {
+                            if (p.Imagem != null)
+                                p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                        }
+                    }
+                    
+                    if(item.Colors != null)
+                    {
+                        foreach (var p in item.Colors)
+                        {
+                            if (p.Imagem != null)
+                                p.urlImage = Encoding.UTF8.GetString(p.Imagem);
+                        }
+                    }
+                    
+                }
             }
             catch (Exception ex)
             {
