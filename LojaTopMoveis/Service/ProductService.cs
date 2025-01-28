@@ -20,7 +20,7 @@ namespace LojaTopMoveis.Service
         public async Task<ServiceResponse<Product>> Create(Product product)
         {
             ServiceResponse<Product> serviceResponse = new ServiceResponse<Product>();
-
+            List<SubcategoriesProduct> categories = null;
             try
             {
                 var photosList = product.Photos;
@@ -29,15 +29,23 @@ namespace LojaTopMoveis.Service
                 var colorList = product.Colors;
                 product.Colors = null;
 
-                var categories = product.SubcategoriesProducts;
-                product.SubcategoriesProducts = null;
+                if (product.SubcategoriesProducts[0].Id != null)
+                {
+                    categories = product.SubcategoriesProducts;
+                    product.SubcategoriesProducts = null;
+                }
+                else
+                {
+                    product.SubcategoriesProducts = null;
+                }
+                
 
                 _context.Add(product);
                 await _context.SaveChangesAsync();
 
 
                 
-                if (categories.Count > 0)
+                if (categories != null && categories.Count > 0)
                 {
                     categories[0].ProductId = product.Id;
                 

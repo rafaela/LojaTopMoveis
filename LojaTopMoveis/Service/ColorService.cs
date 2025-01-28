@@ -44,7 +44,7 @@ namespace LojaTopMoveis.Service
                         }
                     }
 
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                     return true;
 
                 }
